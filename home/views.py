@@ -16,7 +16,7 @@ def order(request):
     return render(request,"pages/order.html")
 
 def menu(request):
-    products = Product.objects.all().order_by('-id')
+    products = Product.objects.all()
 
     paginator = Paginator(products, 8)  # 8 products per page
     page_number = request.GET.get('page')
