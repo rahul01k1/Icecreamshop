@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Blue Sky Summer - Menu{% endblock title %}
+
+{% block content %}
+
+<div class="products">
+    <div class="heading">
+        <h1>Our Latest Flavours</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+    </div>
+
+    <div class="box-container">
+
+        {% if products %}
+            {% for product in products %}
+
+            <form action="" method="post" class="box {% if product.product_stock == 0 %}disabled{% endif %}">
+                {% csrf_token %}
+
+                <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" class="image">
+
+                {% if product.product_stock > 9 %}
+                    <span class="stock" style="color: green;">In Stock</span>
+                {% elif product.product_stock == 0 %}
+                    <span class="stock" style="color: red;">Out of Stock</span>
+                {% else %}
+                    <span class="stock" style="color: red;">Hurry, only {{ product.product_stock }} left!</span>
+                {% endif %}
+
+                <div class="content">
+                    <img src="{% static 'image/shape-19.png' %}" alt="Shape Image" class="shap">
+
+                    <div class="button">
+                        <div><h3 class="name">{{ product.product_name }}</h3></div>
+
+                        <div>
+                            <button type="submit" name="add_to_cart">
+                                <img src="{% static 'image/icon/cart.png' %}">
+                            </button>
+
+                            <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}" name="add_to_wishlist">
+                                <img src="{% static 'image/icon/wl.png' %}">
+                            </button>
+
+                            <a href="{% url 'view_product' product.id %}">
+                                <img src="{% static 'image/icon/eye.png' %}">
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="price">Price: ₹{{ product.product_price }}</p>
+
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                    <div class="flex-btn">
+                        <a href="{% url 'checkout' %}" class="btn">Buy Now</a>
+                        <input type="number" name="qty" min="1" max="99" value="1" class="qty box">
+                    </div>
+                </div>
+            </form>
+
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No products added yet!</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Pagination Section -->
+    <div class="pagination">
+        {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}" class="btn">Prev</a>
+        {% endif %}
+
+        <span class="page-info"> Page {{ products.number }} of {{ products.paginator.num_pages }} </span>
+
+        {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}" class="btn">Next</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock content %}

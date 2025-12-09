@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Blue Sky Summer - Orders{% endblock title %}
+
+{% block content %}
+
+<!-------------------------------------------------------------------------------------------------------------->
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>My Orders</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+        From classic flavors to bold new creations, there's something delicious for everyone!</p>
+
+        <span>
+            <a href="{% url 'home' %}">home</a>
+            <i class="bx bx-right-arrow-alt"></i> My Orders
+        </span>
+    </div>
+</div> {% endcomment %}
+<!-------------------------------------------------------------------------------------------------------------->
+
+<div class="products">
+    <div class="heading">
+        <h1>My Orders</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+    </div>
+
+    <div class="box-container">
+
+        {% if orders %}
+            {% for order in orders %}
+            <div class="box"
+                {% if order.status == 'cancled' %}
+                    style="border:2px solid red;"
+                {% endif %}
+            >
+
+                <a href="{% url 'view_order' order.id %}" class="box-link">
+
+                    <img src="{{ order.product.image.url }}" class="image">
+
+                    <p class="date">
+                        <i class="bx bxs-calendar-alt"></i> {{ order.date }}
+                    </p>
+
+                    <div class="content">
+                        <img src="{% static 'image/shape-19.png' %}" class="shap" alt="Shape">
+
+                        <div class="row">
+                            <h3 class="name">{{ order.product.name }}</h3>
+                            <p class="price">Price: ${{ order.product.price }}/-</p>
+
+                            <p class="status"
+                                style="color:
+                                    {% if order.status == 'delivered' %}
+                                        green
+                                    {% elif order.status == 'cancled' %}
+                                        red
+                                    {% else %}
+                                        orange
+                                    {% endif %}
+                                ">
+                                {{ order.status }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">No Orders Taken Place Yet!</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock content %}
+

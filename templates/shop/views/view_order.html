@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} My Orders - The Blue Summer{% endblock title %}
+
+{% block content %}
+
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>My Orders</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+        From classic flavors to bold new creations, there's something delicious for everyone!</p>
+        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> My Orders</span>
+    </div>
+</div> {% endcomment %}
+
+<div class="products">
+    <div class="heading">
+        <h1>Your Order History</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+    </div>
+
+    <div class="box-container">
+
+        {% if orders %}
+            {% for order in orders %}
+            <div class="box">
+                <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="image">
+
+                <div class="content">
+                    <img src="{% static 'image/shape-19.png' %}" class="shap" alt="shape">
+
+                    <h3 class="name">{{ order.product.name }}</h3>
+
+                    <p class="price">Price: ${{ order.price }}/-</p>
+
+                    <p class="qty">Qty : {{ order.qty }}</p>
+
+                    <p class="date">
+                        <i class="bx bxs-calendar-alt"></i> {{ order.date|date:"M d, Y" }}
+                    </p>
+
+                    <p>Status :
+                        {% if order.status == "delivered" %}
+                            <span style="color: green;">Delivered</span>
+                        {% elif order.status == "canceled" %}
+                            <span style="color: red;">Canceled</span>
+                        {% else %}
+                            <span style="color: orange;">In Progress</span>
+                        {% endif %}
+                    </p>
+
+                    <p>Payment :
+                        {% if order.payment_status == "order delivered" %}
+                            <span style="color: green;">Paid</span>
+                        {% else %}
+                            <span style="color: red;">Pending</span>
+                        {% endif %}
+                    </p>
+
+                    <div class="flex-btn">
+                        <a href="{% url 'view_order' order.id %}" class="btn">View Details</a>
+
+                        {% if order.status != "canceled" %}
+                        <a href="{% url 'cancel_order' order.id %}" class="btn"
+                           onclick="return confirm('Cancel this order?');">Cancel</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No orders placed yet!</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+
+{% endblock content%}

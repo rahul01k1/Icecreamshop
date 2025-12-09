@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile - Blue Sky Summer{% endblock title %}
+
+{% block content %}
+
+
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>Profile</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+        From classic flavors to bold new creations, there's something delicious for everyone!</p>
+        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> profile</span>
+    </div>
+</div> {% endcomment %}
+
+<div class="profile">
+    <div class="heading">
+        <h1>Profile Details</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="">
+    </div>
+
+    <div class="details">
+        <div class="user">
+
+            {% if user_image %}
+                <img src="{{ user_image }}" alt="profile-img">
+            {% else %}
+                <img src="{% static 'image/icon/profile.png' %}" alt="default">
+            {% endif %}
+
+            <h3 style="margin-bottom: 1rem;">{{ user_name }}</h3>
+            <p>User</p>
+
+            <a href="{% url 'update_profile' %}" class="btn">Update Profile</a>
+        </div>
+
+        <div class="box-container">
+
+            <div class="box">
+                <div class="flex">
+                    <i class="bx bxs-folder-minus"></i>
+                    <h3>{{ total_orders }}</h3>
+                </div>
+                <a href="{% url 'order' %}" class="btn">View Orders</a>
+            </div>
+
+            <div class="box">
+                <div class="flex">
+                    <i class="bx bxs-chat"></i>
+                    <h3>{{ total_messages }}</h3>
+                </div>
+                <a href="{% url 'my_messages' %}" class="btn">View Messages</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content%}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Register - The Blue Summer{% endblock %}
+
+{% block content %}
+
+<!-- Banner Section -->
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>Register</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+            From classic flavors to bold new creations, there's something delicious for everyone!
+        </p>
+        <span>
+            <a href="{% url 'home' %}">Home</a>
+            <i class="bx bx-right-arrow-alt"></i> Register
+        </span>
+    </div>
+</div> {% endcomment %}
+
+<!-- Register Form -->
+<div class="form-container">
+    <form method="post" enctype="multipart/form-data" class="register">
+        {% csrf_token %}
+        <h3>Register Now</h3>
+
+        <div class="flex">
+            <div class="cols">
+                <div class="input-field">
+                    <p>Your Name <span>*</span></p>
+                    <input type="text" name="name" placeholder="Enter Your Name" maxlength="50" required class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Your Email <span>*</span></p>
+                    <input type="email" name="email" placeholder="Enter Your Email" maxlength="50" required class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Your Password <span>*</span></p>
+                    <input type="password" name="password" placeholder="Enter Your Password" maxlength="50" required class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Confirm Password <span>*</span></p>
+                    <input type="password" name="cpassword" placeholder="Enter Your Password" maxlength="50" required class="box">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-field">
+            <p>Your Profile <span>*</span></p>
+            <input type="file" name="profile_image" accept="image/*" required class="box">
+        </div>
+
+        <p class="link">Already have an account?
+            <a href="{% url 'login' %}">Login Now</a>
+        </p>
+
+        <input type="submit" value="Register Now" class="btn">
+    </form>
+</div>
+{% endblock %}

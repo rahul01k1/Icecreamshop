@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Blue Sky Summer - Contact Us{% endblock title %}
+
+{% block content %}
+
+<!------------------------------------- Banner ------------------------------------>
+<div class="banner">
+    <div class="detail">
+        <h1>Contact Us</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+            From classic flavors to bold new creations, there's something delicious for everyone!</p>
+
+        <span>
+            <a href="{% url 'home' %}">home</a>
+            <i class="bx bx-right-arrow-alt"></i> Contact Us
+        </span>
+    </div>
+</div>
+
+<!-------------------------------------- Services ------------------------------------>
+<div class="services">
+    <div class="heading">
+        <h1>Our Services</h1>
+        <img src="{% static 'image/separator-img.png' %}">
+    </div>
+
+    <div class="box-container">
+        <div class="box">
+            <img src="{% static 'image/0.png' %}">
+            <div>
+                <h1>Free Shipping Fast</h1>
+                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
+            </div>
+        </div>
+
+        <div class="box">
+            <img src="{% static 'image/1.png' %}">
+            <div>
+                <h1>Money Back Guarantee</h1>
+                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
+            </div>
+        </div>
+
+        <div class="box">
+            <img src="{% static 'image/2.png' %}">
+            <div>
+                <h1>24/7 Support</h1>
+                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------------------------------- Contact Form ------------------------------------>
+<div class="form-container">
+    <div class="heading">
+        <h1>Drop Us a Line</h1>
+        <p>Just a few clicks to reach us</p>
+        <img src="{% static 'image/separator-img.png' %}">
+    </div>
+
+    <form method="POST" action="" class="register">
+        {% csrf_token %}
+        <div class="input-field">
+            <label>Name <sup>*</sup></label>
+            <input type="text" name="name" required placeholder="Enter your name"  class="box">
+        </div>
+        <div class="input-field">
+            <label>Email <sup>*</sup></label>
+            <input type="email" name="email" required placeholder="Enter your email" class="box">
+        </div>
+        <div class="input-field">
+            <label>Subject <sup>*</sup></label>
+            <input type="text" name="subject" required placeholder="Reason..." class="box">
+        </div>
+        <div class="input-field">
+            <label>Comment <sup>*</sup></label>
+            <textarea name="message" cols="15" rows="8" required placeholder="Your message" class="box"></textarea>
+        </div>
+
+        <button type="submit" name="send_message" class="btn">Send Message</button>
+    </form>
+</div>
+
+<!------------------------------------- Address Section ------------------------------------>
+<div class="address">
+    <div class="heading">
+        <h1>Our Contact Details</h1>
+        <p>Just a few clicks to connect with us</p>
+        <img src="{% static 'image/separator-img.png' %}">
+    </div>
+
+    <div class="box-container">
+        <div class="box">
+            <i class="bx bxs-map-alt"></i>
+            <div>
+                <h4>Address</h4>
+                <p>Ahmedabad , Gujrat 380015</p>
+                <p>India</p>
+            </div>
+        </div>
+
+        <div class="box">
+            <i class="bx bxs-phone-incoming"></i>
+            <div>
+                <h4>Phone Number</h4>
+                <p>Vipul Lilapara</p>
+                <p>7041998854</p>
+            </div>
+        </div>
+
+        <div class="box">
+            <i class="bx bxs-envelope"></i>
+            <div>
+                <h4>Email</h4>
+                <p>lilaparavipul123@gmail.com</p>
+                <p>lilaparavipul122@gmail.com</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+

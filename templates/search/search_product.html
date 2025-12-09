@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Search_Product - Blue Sky Summer{% endblock title %}
+
+{% block content %}
+<div class="products">
+    <div class="heading">
+        <h1>Search Products</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+    </div>
+
+    <div class="box-container">
+        {% if products %}
+            {% for product in products %}
+            <form action="" method="post" class="box {% if product.product_stock == 0 %}disabled{% endif %}">
+                {% csrf_token %}
+
+                <img src="{{ product.product_image.url }}" alt="Product Image" class="image">
+
+                {% if product.product_stock > 9 %}
+                    <span class="stock" style="color: green;">In Stock</span>
+                {% elif product.product_stock == 0 %}
+                    <span class="stock" style="color: red;">Out of Stock</span>
+                {% else %}
+                    <span class="stock" style="color: red;">Hurry, only {{ product.product_stock }} left!</span>
+                {% endif %}
+
+                <div class="content">
+                    <img src="{% static 'image/shape-19.png' %}" class="shap">
+
+                    <div class="button">
+                        <div><h3 class="name">{{ product.product_name }}</h3></div>
+
+                        <div>
+                            <button type="submit" name="add_to_cart">
+                                <i class="bx bx-cart"></i>
+                            </button>
+
+                            <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}" name="add_to_wishlist">
+                                <i class="bx bx-heart"></i>
+                            </button>
+
+                            <a href="{% url 'view_product' product.id %}" class="bx bxs-show"></a>
+                        </div>
+                    </div>
+
+                    <p class="price">Price: ₹{{ product.product_price }}</p>
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                    <div class="flex-btn">
+                        <a href="{% url 'checkout' product.id %}" class="btn">Buy Now</a>
+
+                        <input type="number" name="qty" required min="1" value="1" max="99" maxlength="2" class="qty box">
+                    </div>
+                </div>
+            </form>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No products found!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

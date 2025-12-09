@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login - The Blue Summer {% endblock %}
+
+{% block content %}
+
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>Login</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+            From classic flavors to bold new creations, there's something delicious for everyone!</p>
+
+        <span>
+            <a href="{% url 'home' %}">home</a>
+            <i class="bx bx-right-arrow-alt"></i> Login
+        </span>
+    </div>
+</div> {% endcomment %}
+
+<div class="form-container">
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <p class="alert {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="login">
+        {% csrf_token %}
+        <h3>Login Now</h3>
+
+        <div class="flex">
+            <div class="cols">
+                <div class="input-field">
+                    <p>Your Email <span>*</span></p>
+                    <input type="email" name="email" placeholder="Enter Your Email" maxlength="50" required class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Your Password <span>*</span></p>
+                    <input type="password" name="password" placeholder="Enter Your Password" maxlength="50" required class="box">
+                </div>
+            </div>
+        </div>
+
+        <p class="link">Do not have an account?
+            <a href="{% url 'register' %}">Register Now</a>
+        </p>
+
+        <input type="submit" value="Login Now" class="btn">
+    </form>
+</div>
+
+{% endblock %}

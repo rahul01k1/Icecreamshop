@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Update Profile - Blue Sky Summer{% endblock title %}
+
+{% block content %}
+
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>Update Profile</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
+        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> update profile</span>
+    </div>
+</div> {% endcomment %}
+
+<section class="form-container">
+    <div class="heading">
+        <h1>Update Profile</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator">
+    </div>
+
+    <form action="" method="post" enctype="multipart/form-data" class="register">
+        {% csrf_token %}
+
+        <div class="img-box" style="text-align:center; margin-bottom: 1rem;">
+            {% if user_image %}
+                <img style="border-radius: 50%; width:120px;height:120px;object-fit:cover;" src="{{ user_image }}" alt="Profile Image">
+            {% else %}
+                <img style="border-radius:50%; width:120px;height:120px;" src="{% static 'image/icon/profile.png' %}" alt="">
+            {% endif %}
+        </div>
+
+        <h3>Update Profile</h3>
+
+        <div class="flex">
+            <div class="cols">
+
+                <div class="input-field">
+                    <p>Your Name <span>*</span></p>
+                    <input type="text" name="name" placeholder="{{ user_name }}" class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Your Email <span>*</span></p>
+                    <input type="email" name="email" placeholder="{{ user_email }}" class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Select Profile Image</p>
+                    <input type="file" name="image" accept="image/*" class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Old Password</p>
+                    <input type="password" name="old_pass" placeholder="Enter old password" class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>New Password</p>
+                    <input type="password" name="new_pass" placeholder="Enter new password" class="box">
+                </div>
+
+                <div class="input-field">
+                    <p>Confirm Password</p>
+                    <input type="password" name="cpass" placeholder="Confirm password" class="box">
+                </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Update Profile</button>
+    </form>
+</section>
+
+
+{% endblock content%}

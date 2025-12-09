@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Blue Sky Summer - Home{% endblock title %}
+
+{% block content %}
+
+{% comment %} <div class="banner">
+    <div class="detail">
+        <h1>My Cart</h1>
+        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
+        From classic flavors to bold new creations, there's something delicious for everyone!</p>
+        <span><a href="{% url 'home' %}">home</a> <i class="bx bx-right-arrow-alt"></i> My Cart</span>
+    </div>
+</div> {% endcomment %}
+
+<div class="products">
+    <div class="heading">
+        <h1>Your Cart Items</h1>
+        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+    </div>
+
+    <div class="box-container">
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+            <form action="{% url 'update_cart' item.id %}" method="post" class="box">
+                {% csrf_token %}
+
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="image">
+
+                <p class="date"><i class="bx bxs-calendar-alt"></i> {{ item.created_at|date:"M d, Y" }}</p>
+
+                <div class="content">
+                    <img src="{% static 'image/shape-19.png' %}" class="shap" alt="Shape">
+
+                    <div class="row">
+                        <h3 class="name">{{ item.product.name }}</h3>
+                        <p class="price">Price: ${{ item.price }}/-</p>
+
+                        <p class="qty-box">
+                            Qty:
+                            <input type="number" name="qty" min="1" max="{{ item.product.stock }}" value="{{ item.qty }}" class="qty">
+                        </p>
+                    </div>
+
+                    <div class="flex-btn" style="margin-top: 10px;">
+                        <button type="submit" class="btn">Update</button>
+                        <a href="{% url 'remove_cart' item.id %}" class="btn"
+                           onclick="return confirm('Remove item from cart?');">Remove</a>
+                    </div>
+                </div>
+            </form>
+            {% endfor %}
+
+            <div class="cart-total">
+                <h3>Total Amount: <span>${{ grand_total }}/-</span></h3>
+                <a href="{% url 'empty_cart' %}" class="btn"
+                   onclick="return confirm('Empty your cart?');">Empty Cart</a>
+                <a href="{% url 'checkout' %}" class="btn">Proceed to Checkout</a>
+            </div>
+
+        {% else %}
+            <div class="empty">
+                <p>Your cart is empty!</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock content %}
