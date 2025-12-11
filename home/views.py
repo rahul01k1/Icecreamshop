@@ -1,9 +1,10 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render , redirect , get_object_or_404
+from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.contrib.auth import login , logout 
 from django.contrib.auth.hashers import make_password , check_password
 from django.contrib import messages
-from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order
+from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order 
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 
@@ -13,12 +14,21 @@ def home(request):
     return render(request,"pages/home.html")
 
 def order(request):
-    return render(request,"pages/order.html")
+    if not request.session.get("user_id"):
+        return redirect("login")
+    
+    user = Buyer.objects.get(id = request.session.get("user_id"))
+    order = Order.objects.filter(user=user).order_by('-id')
+
+    context = {
+        "orders":order
+    }
+    return render(request,"pages/order.html",context)
 
 def menu(request):
     products = Product.objects.all()
 
-    paginator = Paginator(products, 8)  # 8 products per page
+    paginator = Paginator(products, 12)  # 12 products per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -93,6 +103,19 @@ def checkout(request):
 def wishlist(request):
     return render(request,"shop/wishlist.html")
 
+
+def toggle_wishlist(request, id):
+    product = Product.objects.get(id=id)
+    user = request.user
+
+    if Wishlist.objects.filter(user=user, product=product).exists():
+        Wishlist.objects.filter(user=user, product=product).delete()
+        return JsonResponse({"status": "removed"})
+    else:
+        Wishlist.objects.create(user=user, product=product)
+        return JsonResponse({"status": "added"})
+
+
 def add_to_wishlist(request,id):
     return redirect("wishlist")
 
@@ -104,10 +127,35 @@ def remove_wishlist(request,id):
 def view_product(request,id):
     return render(request,"shop/views/view_product.html")
 
-def view_order(request,id):
-    return render(request,"shop/views/view_order.html")
+def view_order(request, id):
+    if not request.session.get('user_id'):
+        return redirect("login")
+
+    order = get_object_or_404(Order, id=id)
+
+    if order.user.id != request.session.get("user_id"):
+        return redirect("order")
+
+    # Correct reverse relation
+    items = order.orderitem_set.select_related("product").all()
+
+    return render(request, "view_order.html", {
+        "order": order,
+        "items": items,
+        "grand_total": order.total_amount
+    })
 
 def cancel_order(request,id):
+    if not request.session.get("user_id"):
+        return redirect("login")
+    
+    order = get_object_or_404(Order,id=id)
+
+    if order.user.id != request.session.get("user_id"):
+        return redirect("order")
+    
+    for item in order.items.all():
+        item.product.stock += item.qty
     return redirect("view_order")
 
 

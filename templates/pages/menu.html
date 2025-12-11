@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="products">
-    <div class="heading">
+    <div class="heading" style="margin-top:0;">
         <h1>Our Latest Flavours</h1>
         <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
     </div>
@@ -15,11 +15,16 @@
         {% if products %}
             {% for product in products %}
 
-            <form action="" method="post" class="box {% if product.product_stock == 0 %}disabled{% endif %}">
+            <form action="" method="post"
+                class="box {% if product.product_stock == 0 %}disabled{% endif %}"
+                onclick="window.location.href='{% url 'view_product' product.id %}'">
+
                 {% csrf_token %}
 
+                <!-- Product Image -->
                 <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" class="image">
 
+                <!-- Stock Badge -->
                 {% if product.product_stock > 9 %}
                     <span class="stock" style="color: green;">In Stock</span>
                 {% elif product.product_stock == 0 %}
@@ -28,25 +33,24 @@
                     <span class="stock" style="color: red;">Hurry, only {{ product.product_stock }} left!</span>
                 {% endif %}
 
+                <!-- ❤️ Wishlist Button (top-right) -->
+                <button class="wishlist-btn"
+                        type="button"
+                        onclick="event.stopPropagation(); toggleWishlist(this, '{{ product.id }}')">
+
+                    {% if product.is_in_wishlist %}
+                        <i class='bx bxs-heart'></i>   <!-- FILLED HEART -->
+                    {% else %}
+                        <i class='bx bx-heart'></i>    <!-- OUTLINE HEART -->
+                    {% endif %}
+                </button>
+
+                <!-- Content -->
                 <div class="content">
                     <img src="{% static 'image/shape-19.png' %}" alt="Shape Image" class="shap">
 
                     <div class="button">
                         <div><h3 class="name">{{ product.product_name }}</h3></div>
-
-                        <div>
-                            <button type="submit" name="add_to_cart">
-                                <img src="{% static 'image/icon/cart.png' %}">
-                            </button>
-
-                            <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}" name="add_to_wishlist">
-                                <img src="{% static 'image/icon/wl.png' %}">
-                            </button>
-
-                            <a href="{% url 'view_product' product.id %}">
-                                <img src="{% static 'image/icon/eye.png' %}">
-                            </a>
-                        </div>
                     </div>
 
                     <p class="price">Price: ₹{{ product.product_price }}</p>
@@ -54,8 +58,23 @@
                     <input type="hidden" name="product_id" value="{{ product.id }}">
 
                     <div class="flex-btn">
-                        <a href="{% url 'checkout' %}" class="btn">Buy Now</a>
-                        <input type="number" name="qty" min="1" max="99" value="1" class="qty box">
+
+                        <!-- BUY NOW Button -->
+                        <button type="button"
+                                class="btn"
+                                onclick="event.stopPropagation(); window.location.href='{% url 'checkout' %}'">
+                            Buy Now
+                        </button>
+
+                        <!-- ADD TO CART Button -->
+                        <button type="submit"
+                                name="add_to_cart"
+                                formaction="{% url 'add_to_cart' product.id %}"
+                                class="btn"
+                                onclick="event.stopPropagation()">
+                            Add to Cart
+                        </button>
+
                     </div>
                 </div>
             </form>
@@ -69,7 +88,7 @@
 
     </div>
 
-    <!-- Pagination Section -->
+    <!-- Pagination -->
     <div class="pagination">
         {% if products.has_previous %}
             <a href="?page={{ products.previous_page_number }}" class="btn">Prev</a>

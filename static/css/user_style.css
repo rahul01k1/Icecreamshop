@@ -11,6 +11,7 @@
     padding: 0 !important;
 }
 
+
   /*------------------------------variables---------------------------------------------------------*/:root {
     --space:2rem;
     --main-color:#da6285;
@@ -1407,7 +1408,7 @@
 }
 
 .profile .details .box-container .box {
-  background-color: rgba(204, 204, 204, 0.1); /* Corrected color format */
+  background-color: rgba(204, 204, 204, 0.1); 
   border-radius: .5rem;
   padding: 1.5rem 2rem;
   flex: 1 1 30rem;
@@ -1460,7 +1461,7 @@
 
 .products .box-container .box .image {
     width: 100%;
-    height: 30rem;
+    height: 28rem;
     object-fit:cover;
     transition: .5s;
     background-color:#fff; /* Ensure this fits your design */
@@ -1493,16 +1494,17 @@
 
 .products .box-container .box h3 {
     text-transform: capitalize;
-    font-size: 1.2;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
 }
 
 .products .box-container .box .price {
     position: absolute;
-    top: 4%;
-    left: 4%; /* Corrected to lowercase "left" */
+    top: 7%;
+    left: 4%; 
     text-transform: capitalize;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-bottom: 1rem;
 }
 
@@ -1510,7 +1512,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 1rem 0;
+    padding: 0 .5rem;
 }
 
 .products .box-container .box .button button {
@@ -1533,10 +1535,12 @@
 .products .box-container .box .flex-btn {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-top: .8rem;
 }
 
 .products .box-container .box .flex-btn input {
-    width: 48%;
+    width: 40%;
     color: var(--main-color);
     padding: .6rem 2rem;
     border-radius: 1.5rem;
@@ -1561,19 +1565,72 @@
     width: 200px;
     border-radius: 20px;
 }
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    z-index: 10;
+    color: var(--main-color);
+}
 
-  
+.wishlist-btn i {
+    transition: .3s ease;
+}
+
+/* .wishlist-btn:hover i {
+    transform: scale(1.2);
+    color: var(--pink-color);
+} */
+
+
 
 .buttons-inline {
     display: flex;
     align-items: center;
-    gap: .4rem;
+    gap: .4rem;  /* reduce gap */
+    margin-left: .2rem; 
 }
 .buttons-inline img {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
 }
+.buttons-inline i {
+    font-size: 1.6rem;
+    color: var(--main-color);
+    margin: 0 0.3rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.buttons-inline i:hover {
+    color: var(--pink-color);
+    transform: scale(1.15);
+}
+
 /* ----------------------------Cart----------------------------------- */
+
+/* Reusable Button Style (Add to Cart + Buy Now) */
+.action-btn {
+    width: 48%;
+    font-size: 18px;
+    padding: .7rem 1rem;
+    border-radius: 1.5rem;
+    background-color: #fff;              /* white background */
+    color: var(--main-color);            /* pink text */
+    border: 1.2px solid var(--main-color);
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.action-btn:hover {
+    background-color: #da6285; /* pink hover */
+    color: #fff;                          /* white text on hover */
+}
+
 
 .sub-total {
     font-size: 1.5rem;
@@ -1612,6 +1669,23 @@
 .cart-total .btn {
   margin: 0.5rem;
 }
+.add-cart-btn {
+    width: 48%;
+    font-size: 17px;
+    padding: .8rem 1rem;
+    border-radius: 1.5rem;
+    background-color: var(--main-color);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: .3s ease;
+    box-shadow: var(--box-shadow);
+}
+
+.add-cart-btn:hover {
+    background-color: var(--pink-color);
+}
+
 
 /* Add Pagination */
 
@@ -1730,7 +1804,7 @@
   }
 }
 
-
+/* -------------------services------------------ */
 .services {
   background-image: url('../image/bn3.3.webp');
   background-attachment: fixed;
@@ -2051,7 +2125,7 @@
     max-width: 1200px;
     margin: 1rem auto;
     padding: 2rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .order-detail .box-container .box {
@@ -2064,7 +2138,7 @@
 }
 
 .order-detail .box-container .box .col {
-    flex: 1 1 30rem; /* Added missing semicolon */
+    flex: 1 1 30rem; 
     font-size: 1rem;
     padding: 2rem;
 }
@@ -2074,8 +2148,8 @@
     width: 100%;
     object-fit: cover;
     margin: 1rem 0;
-    border-radius: .5rem; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Image shadow for depth */
+    border-radius: .5rem; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
 .order-detail .box-container .box .col .title {
@@ -2171,4 +2245,69 @@
 
 .order-detail a:hover {
     background-color: var(--main-color-dark);
+}
+
+
+/* ---------------------------Responsive Mobile Version------------------------------- */
+/* ❤️ Wishlist in top-right */
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--white-alpha-40);
+    backdrop-filter: blur(4px);
+    border: none;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 10;
+    transition: .3s;
+}
+
+.wishlist-btn i {
+    font-size: 1.8rem;
+    color: var(--main-color);
+}
+
+.wishlist-btn .active-heart {
+    color: red !important;
+}
+
+.wishlist-btn:hover i {
+    transform: scale(1.2);
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+    .box-container {
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+        gap: 1rem;
+    }
+
+    .wishlist-btn {
+        top: 6px;
+        right: 6px;
+        padding: 6px;
+    }
+
+    .wishlist-btn i {
+        font-size: 1.5rem;
+    }
+
+    .products .box-container .box .image {
+        height: 18rem;
+    }
+
+    .name {
+        font-size: 1rem;
+    }
+
+    .price {
+        font-size: 1.2rem;
+    }
+
+    .flex-btn {
+        flex-direction: column;
+        gap: .5rem;
+    }
 }

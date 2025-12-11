@@ -30,31 +30,41 @@
         {% if orders %}
             {% for order in orders %}
             <div class="box"
-                {% if order.status == 'cancled' %}
+                {% if order.status == 'cancelled' %}
                     style="border:2px solid red;"
                 {% endif %}
             >
 
                 <a href="{% url 'view_order' order.id %}" class="box-link">
 
-                    <img src="{{ order.product.image.url }}" class="image">
+                    {% for item in order.items.all|slice:":1" %}
+                        <img src="{{ item.product.product_image.url }}" class="image" alt="{{ item.product.product_name }}">
+                    {% endfor %}
 
                     <p class="date">
-                        <i class="bx bxs-calendar-alt"></i> {{ order.date }}
+                        <i class="bx bxs-calendar-alt"></i> {{ order.date|date:"M d, Y" }}
                     </p>
 
                     <div class="content">
                         <img src="{% static 'image/shape-19.png' %}" class="shap" alt="Shape">
 
                         <div class="row">
-                            <h3 class="name">{{ order.product.name }}</h3>
-                            <p class="price">Price: ${{ order.product.price }}/-</p>
+                            <h3 class="name">
+                                {% for item in order.items.all|slice:":1" %}
+                                    {{ item.product.product_name }}
+                                {% endfor %}
+                                {% if order.items.count > 1 %}
+                                    + {{ order.items.count|add:"-1" }} more items
+                                {% endif %}
+                            </h3>
+
+                            <p class="price">Total: ₹{{ order.total_amount }}</p>
 
                             <p class="status"
                                 style="color:
                                     {% if order.status == 'delivered' %}
                                         green
-                                    {% elif order.status == 'cancled' %}
+                                    {% elif order.status == 'cancelled' %}
                                         red
                                     {% else %}
                                         orange
@@ -73,6 +83,7 @@
 
     </div>
 </div>
+
 
 {% endblock content %}
 

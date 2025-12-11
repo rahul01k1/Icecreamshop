@@ -82,3 +82,22 @@ if (btn.length > 0 && slide) {
         btn[index].classList.add('active');
     }
 }
+
+function toggleWishlist(btn, productId) {
+
+    let icon = btn.querySelector("i");
+
+    // Toggle UI instantly
+    icon.classList.toggle("bx-heart");
+    icon.classList.toggle("bxs-heart");
+
+    // AJAX request to Django (no reload)
+    fetch(`/toggle-wishlist/${productId}/`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("Wishlist Updated:", data.status);
+        })
+        .catch(err => console.log(err));
+}
+
+
