@@ -44,7 +44,7 @@ urlpatterns = [
     # Profile
     path('profile/', views.profile, name="profile"),
     path('update_profile/', views.update_profile, name="update_profile"),
-    path('my_messages/', views.user_messages, name="my_messages"),
+    path('user_messages/', views.user_messages, name="user_messages"),
 
     # Authentication
     path('login/', views.user_login, name="login"),

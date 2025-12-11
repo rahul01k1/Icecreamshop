@@ -1,9 +1,179 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Messages - Blue Sky Summer{% endblock title %}
+{% block title %}My Messages - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
+<div class="messages-wrapper">
+
+    <h1 class="title">My Messages</h1><br>
+    <p class="subtitle">See all your recent queries and notifications here</p>
+    <img src="{% static 'image/separator-img.png' %}" class="separator">
+
+    <div class="message-container">
+
+        {% if messages_list %}
+            {% for msg in messages_list %}
+            <div class="message-card">
+
+                <div class="msg-header">
+                    <div class="msg-icon">
+                        <img src="{% static 'image/icon/message.png' %}" alt="msg icon">
+                    </div>
+
+                    <div>
+                        <h3 class="msg-title">{{ msg.subject }}</h3>
+                        <p class="msg-date">{{ msg.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+
+                <div class="msg-body">
+                    <p>{{ msg.message }}</p>
+                </div>
+
+                <div class="msg-footer">
+                    <p class="msg-email">
+                        <i class="bx bx-envelope"></i> {{ msg.email }}
+                    </p>
+                    <span class="msg-sender">{{ msg.name }}</span>
+                </div>
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-box">
+                <img src="{% static 'image/icon/empty.png' %}" class="empty-img">
+                <p>No messages found!</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+</div>
 
 
-{% endblock content%}
+<!-- ============================================================
+                          STYLING
+============================================================ -->
+<style>
+
+.messages-wrapper {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.title {
+    font-size: 40px;
+    font-weight: 700;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 17px;
+    color: #666;
+    margin-top: -6px;
+}
+
+.separator {
+    width: 170px;
+    margin: 12px 0 40px;
+}
+
+/* Message Container */
+.message-container {
+    width: 85%;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+/* Message Card */
+.message-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    text-align: left;
+    transition: 0.3s;
+}
+
+.message-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* Header */
+.msg-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.msg-icon {
+    background: #ffe0ec;
+    padding: 12px;
+    border-radius: 50%;
+}
+
+.msg-icon img {
+    width: 28px;
+}
+
+/* Title + Date */
+.msg-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.msg-date {
+    font-size: 14px;
+    color: #888;
+}
+
+/* Body */
+.msg-body {
+    margin: 15px 0;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Footer */
+.msg-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.msg-email {
+    color: #666;
+    font-size: 14px;
+}
+
+.msg-sender {
+    background: #ffd4e3;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #d6336c;
+}
+
+/* Empty Box */
+.empty-box {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 50px 0;
+}
+
+.empty-img {
+    width: 140px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+</style>
+
+{% endblock %}

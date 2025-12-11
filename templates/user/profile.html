@@ -1,61 +1,245 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Profile - Blue Sky Summer{% endblock title %}
+{% block title %}My Profile - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
+<div class="profile-wrapper">
 
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>Profile</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-        From classic flavors to bold new creations, there's something delicious for everyone!</p>
-        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> profile</span>
-    </div>
-</div> {% endcomment %}
+    <h1 class="title">My Profile</h1><br>
+    <p class="subtitle">Manage your personal information and account settings</p>
+    <img src="{% static 'image/separator-img.png' %}" class="separator">
 
-<div class="profile">
-    <div class="heading">
-        <h1>Profile Details</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="">
-    </div>
+    <div class="outer-container">
 
-    <div class="details">
-        <div class="user">
+        <!-- LEFT SIDE PANEL -->
+        <div class="profile-sidebar">
+            <img src="{{ user.user_image.url }}" class="avatar">
 
-            {% if user_image %}
-                <img src="{{ user_image }}" alt="profile-img">
-            {% else %}
-                <img src="{% static 'image/icon/profile.png' %}" alt="default">
-            {% endif %}
+            <h2 class="username">{{ user.user_name }}</h2>
+            <p class="email">{{ user.user_email }}</p>
 
-            <h3 style="margin-bottom: 1rem;">{{ user_name }}</h3>
-            <p>User</p>
+            <a href="{% url 'update_profile' %}" class="btn-edit">Edit Profile</a>
 
-            <a href="{% url 'update_profile' %}" class="btn">Update Profile</a>
+            <div class="side-links">
+                <a href="{% url 'order' %}">My Orders</a>
+                <a href="{% url 'wishlist' %}">My Wishlist</a>
+                <a href="{% url 'user_messages' %}">Messages</a>
+            </div>
         </div>
 
-        <div class="box-container">
+        <!-- RIGHT SIDE CONTENT AREA -->
+        <div class="profile-content">
 
-            <div class="box">
-                <div class="flex">
-                    <i class="bx bxs-folder-minus"></i>
-                    <h3>{{ total_orders }}</h3>
+            <!-- SECTION 1: ACCOUNT INFORMATION -->
+            <div class="section-card">
+                <h3 class="section-title">Account Information</h3>
+
+                <div class="info-grid">
+                    <div>
+                        <p class="label">Full Name</p>
+                        <p class="value">{{ user.user_name }}</p>
+                    </div>
+
+                    <div>
+                        <p class="label">Email</p>
+                        <p class="value">{{ user.user_email }}</p>
+                    </div>
+
+                    <div>
+                        <p class="label">Joined On</p>
+                        <p class="value">{{ user.created_at|date:"M d, Y" }}</p>
+                    </div>
                 </div>
-                <a href="{% url 'order' %}" class="btn">View Orders</a>
             </div>
 
-            <div class="box">
-                <div class="flex">
-                    <i class="bx bxs-chat"></i>
-                    <h3>{{ total_messages }}</h3>
+            <!-- SECTION 2: ACCOUNT ACTIVITY -->
+            <div class="section-card">
+                <h3 class="section-title">Quick Actions</h3>
+
+                <div class="action-grid">
+                    <a href="{% url 'order' %}" class="action-box">
+                        <img src="{% static 'image/icon/order.png' %}">
+                        <p>View Orders</p>
+                    </a>
+
+                    <a href="{% url 'wishlist' %}" class="action-box">
+                        <img src="{% static 'image/icon/wishlist.png' %}">
+                        <p>My Wishlist</p>
+                    </a>
+
+                    <a href="{% url 'user_messages' %}" class="action-box">
+                        <img src="{% static 'image/icon/message.png' %}">
+                        <p>Messages</p>
+                    </a>
                 </div>
-                <a href="{% url 'my_messages' %}" class="btn">View Messages</a>
             </div>
 
         </div>
     </div>
+
 </div>
 
 
-{% endblock content%}
+<!-- ============================================================
+                        STYLING
+============================================================ -->
+<style>
+
+.profile-wrapper {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #333;
+}
+
+.subtitle {
+    color: #666;
+    margin-top: -10px;
+    font-size: 18px;
+}
+
+.separator {
+    width: 180px;
+    margin-top: 10px;
+}
+
+.outer-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    width: 90%;
+    margin-inline: auto;
+}
+
+/* ---------------- LEFT SIDE ---------------- */
+
+.profile-sidebar {
+    width: 28%;
+    background: #fff;
+    padding: 35px 25px;
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 5px solid #ffb6c1;
+    margin-bottom: 15px;
+}
+
+.username {
+    font-size: 26px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.email {
+    font-size: 15px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.btn-edit {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #ff7fa8;
+    color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.side-links a {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.side-links a:hover {
+    color: #ff7fa8;
+}
+
+/* ---------------- RIGHT SIDE ---------------- */
+
+.profile-content {
+    width: 68%;
+}
+
+.section-card {
+    background: #fff;
+    padding: 35px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+}
+
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.label {
+    color: #777;
+    font-size: 14px;
+}
+
+.value {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: -5px;
+}
+
+/* ACTION OPTIONS */
+.action-grid {
+    display: flex;
+    gap: 25px;
+}
+
+.action-box {
+    flex: 1;
+    background: #fafafa;
+    padding: 25px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.action-box img {
+    width: 55px;
+    margin-bottom: 10px;
+}
+
+.action-box:hover {
+    transform: translateY(-5px);
+    background: #ffe4ed;
+}
+
+.action-box p {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+</style>
+
+{% endblock %}

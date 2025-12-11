@@ -1,75 +1,209 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Update Profile - Blue Sky Summer{% endblock title %}
+{% block title %}Update Profile - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>Update Profile</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
-        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> update profile</span>
-    </div>
-</div> {% endcomment %}
+<div class="update-wrapper">
 
-<section class="form-container">
-    <div class="heading">
-        <h1>Update Profile</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="Separator">
-    </div>
+    <h1 class="title">Update Profile</h1><br>
+    <p class="subtitle">Edit your personal details and keep your information up to date</p>
+    <img src="{% static 'image/separator-img.png' %}" class="separator">
 
-    <form action="" method="post" enctype="multipart/form-data" class="register">
-        {% csrf_token %}
+    <div class="update-container">
 
-        <div class="img-box" style="text-align:center; margin-bottom: 1rem;">
-            {% if user_image %}
-                <img style="border-radius: 50%; width:120px;height:120px;object-fit:cover;" src="{{ user_image }}" alt="Profile Image">
-            {% else %}
-                <img style="border-radius:50%; width:120px;height:120px;" src="{% static 'image/icon/profile.png' %}" alt="">
-            {% endif %}
+        <!-- LEFT SIDE — Profile Preview -->
+        <div class="profile-preview">
+
+            <h2 class="section-title">Profile Overview</h2>
+
+            <img src="{{ user.user_image.url }}" class="profile-img">
+
+            <h3 class="profile-name">{{ user.user_name }}</h3><br>
+            <p class="profile-email">{{ user.user_email }}</p>
+
+            <p class="note">You can update your photo, email, and password</p>
         </div>
 
-        <h3>Update Profile</h3>
+        <!-- RIGHT SIDE — Update Form -->
+        <div class="update-form">
 
-        <div class="flex">
-            <div class="cols">
+            <h2 class="section-title">Edit Your Details</h2>
 
-                <div class="input-field">
-                    <p>Your Name <span>*</span></p>
-                    <input type="text" name="name" placeholder="{{ user_name }}" class="box">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Your Name </label>
+                        <input type="text" name="user_name" value="{{ user.user_name }}" class="input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Email </label>
+                        <input type="email" name="user_email" value="{{ user.user_email }}" class="input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Change Profile Image</label>
+                        <input type="file" name="user_image" accept="image/*" class="input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Old Password</label>
+                        <input type="password" name="user_old_password" class="input" placeholder="Enter old password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" name="user_new_password" class="input" placeholder="Enter new password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" name="user_confirm_password" class="input" placeholder="Confirm password">
+                    </div>
+
                 </div>
 
-                <div class="input-field">
-                    <p>Your Email <span>*</span></p>
-                    <input type="email" name="email" placeholder="{{ user_email }}" class="box">
-                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
 
-                <div class="input-field">
-                    <p>Select Profile Image</p>
-                    <input type="file" name="image" accept="image/*" class="box">
-                </div>
-
-                <div class="input-field">
-                    <p>Old Password</p>
-                    <input type="password" name="old_pass" placeholder="Enter old password" class="box">
-                </div>
-
-                <div class="input-field">
-                    <p>New Password</p>
-                    <input type="password" name="new_pass" placeholder="Enter new password" class="box">
-                </div>
-
-                <div class="input-field">
-                    <p>Confirm Password</p>
-                    <input type="password" name="cpass" placeholder="Confirm password" class="box">
-                </div>
-
-            </div>
+            </form>
         </div>
-
-        <button type="submit" class="btn">Update Profile</button>
-    </form>
-</section>
+    </div>
+</div>
 
 
-{% endblock content%}
+<!-- ============================================================
+                          STYLING
+============================================================ -->
+<style>
+
+.update-wrapper {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #666;
+    margin-top: -8px;
+}
+
+.separator {
+    width: 180px;
+    margin-top: 12px;
+}
+
+.update-container {
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    margin-inline: auto;
+    margin-top: 50px;
+    gap: 40px;
+}
+
+/* Left Panel - Preview */
+.profile-preview {
+    width: 30%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.profile-img {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #ffb6c1;
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.profile-email {
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.note {
+    font-size: 14px;
+    color: #888;
+}
+
+/* Right Panel - Form */
+.update-form {
+    width: 65%;
+    background: #fff;
+    padding: 35px 40px;
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.input:focus {
+    border-color: #ff7fa8;
+    box-shadow: 0 0 6px rgba(255,127,168,0.3);
+}
+
+.save-btn {
+    width: 100%;
+    margin-top: 30px;
+    padding: 14px;
+    background: #ff7fa8;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background: #ff5f92;
+}
+
+</style>
+
+{% endblock %}
