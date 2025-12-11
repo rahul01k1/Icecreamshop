@@ -12,79 +12,234 @@
         <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
     </div>
 
-    <div class="box-container">
+    <div class="wishlist-grid">
 
         {% if items %}
-
             {% for item in items %}
-            <div class="box wishlist-card {% if item.product.product_stock == 0 %}disabled{% endif %}">
 
-                <!-- PRODUCT IMAGE -->
-                <div class="wishlist-img-wrapper">
-                    <img src="{{ item.product.product_image.url }}" class="image" alt="{{ item.product.product_name }}">
+            <div class="wishlist-card {% if item.product.product_stock == 0 %}disabled{% endif %}">
+
+                <!-- IMAGE -->
+                <div class="wishlist-img-box">
+                    <img src="{{ item.product.product_image.url }}" alt="{{ item.product.product_name }}">
                 </div>
 
                 <!-- STOCK LABEL -->
                 {% if item.product.product_stock > 9 %}
-                    <span class="stock in-stock">In Stock</span>
+                    <span class="stock-label stock-ok">In Stock</span>
                 {% elif item.product.product_stock == 0 %}
-                    <span class="stock out-stock">Out of Stock</span>
+                    <span class="stock-label stock-out">Out of Stock</span>
                 {% else %}
-                    <span class="stock low-stock">Only {{ item.product.product_stock }} left</span>
+                    <span class="stock-label stock-low">Only {{ item.product.product_stock }} left</span>
                 {% endif %}
 
-                <div class="content">
-                    <img src="{% static 'image/shape-19.png' %}" class="shap" alt="">
+                <!-- CONTENT -->
+                <div class="wishlist-content">
 
-                    <!-- PRODUCT TITLE + ACTIONS -->
-                    <div class="wishlist-header">
-                        <h3 class="name">{{ item.product.product_name }}</h3>
+                    <h3 class="product-title">{{ item.product.product_name }}</h3>
 
-                        <div class="wishlist-actions">
-
-                            <!-- ADD TO CART -->
-                            <form action="{% url 'add_to_cart' item.product.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="icon-btn" title="Add to Cart">
-                                    <img src="{% static 'image/icon/cart.png' %}" alt="Cart">
-                                </button>
-                            </form>
-
-                            <!-- VIEW PRODUCT -->
-                            <a href="{% url 'view_product' item.product.id %}" class="icon-btn" title="View Product">
-                                <img src="{% static 'image/icon/eye.png' %}" alt="View">
-                            </a>
-
-                            <!-- REMOVE -->
-                            <a href="{% url 'remove_wishlist' item.id %}"
-                               onclick="return confirm('Remove from wishlist?');"
-                               class="icon-btn delete"
-                               title="Remove">
-                                <img src="{% static 'image/icon/trash.png' %}" alt="Delete">
-                            </a>
-
-                        </div>
-                    </div>
-
-                    <!-- PRICE -->
                     <p class="price">₹{{ item.price }}</p>
 
-                    <!-- BUY NOW BUTTON -->
+                    <div class="wishlist-actions">
+
+                        <form action="{% url 'add_to_cart' item.product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="icon-btn">
+                                <img src="{% static 'image/icon/cart.png' %}">
+                            </button>
+                        </form>
+
+                        <a href="{% url 'view_product' item.product.id %}" class="icon-btn">
+                            <img src="{% static 'image/icon/eye.png' %}">
+                        </a>
+
+                        <a href="{% url 'remove_wishlist' item.id %}"
+                           onclick="return confirm('Remove from wishlist?')"
+                           class="icon-btn delete-btn">
+                            <img src="{% static 'image/icon/trash.png' %}">
+                        </a>
+
+                    </div>
+
+
                     <a href="{% url 'checkout' %}?get_id={{ item.product.id }}" class="btn buy-btn">
                         Buy Now
                     </a>
 
                 </div>
+
             </div>
             {% endfor %}
 
         {% else %}
             <div class="empty">
+                <img src="{% static 'image/icon/empty.png' %}" width="200">
                 <p>Your wishlist is empty! Start adding some treats.</p>
             </div>
         {% endif %}
 
     </div>
+
 </div>
+
+<!-- ===================== WISHLIST STYLES ===================== -->
+<style>
+/* GRID: SHOW 4 ITEMS PER ROW */
+.wishlist-grid {
+    width: 90%;
+    margin: 2.5rem auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.7rem;
+}
+
+/* SMALLER CARD */
+.wishlist-card {
+    background: #fff;
+    border-radius: 12px;
+    padding-bottom: .7rem;  /* reduced padding */
+    box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+    overflow: hidden;
+    position: relative;
+    transition: .25s ease;
+}
+
+.wishlist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* IMAGE BOX — Reduced margins + smaller height */
+.wishlist-img-box {
+    width: 100%;
+    height: 350px; /* reduced from 260px */
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+    background: #f4f5f7; /* less contrast */
+    margin-bottom: .5rem; /* reduced gap */
+}
+
+.wishlist-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: .3s ease;
+}
+
+.wishlist-img-box:hover img {
+    transform: scale(1.05);
+}
+
+/* STOCK LABEL — slightly smaller */
+.stock-label {
+    position: absolute;
+    top: 10px; /* tighter */
+    left: 10px;
+    padding: 5px 12px;
+    font-size: .8rem;
+    color: #fff;
+    border-radius: 6px;
+}
+
+/* COLORS */
+.stock-ok { background: #26c281; }
+.stock-low { background: #F39C12; }
+.stock-out { background: #E74C3C; }
+
+/* CONTENT AREA — reduced padding */
+.wishlist-content {
+    padding: .7rem .9rem;
+}
+
+/* TITLE — reduced margin */
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: .7rem;
+    height: 30px; /* smaller fixed height */
+}
+
+/* ACTION ICONS — tighter layout */
+.wishlist-actions {
+    display: flex;
+    gap: .5rem; /* reduced space */
+    margin-bottom: .8rem;
+}
+
+/* ICON BUTTONS — smaller size */
+.icon-btn {
+    background: #f2f3f7;
+    border-radius: 7px;
+    padding: 0.55rem 0.75rem; /* reduced padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+}
+
+.icon-btn img {
+    width: 20px; /* smaller icon */
+    height: 20px;
+}
+
+.icon-btn:hover {
+    background: #fff;
+    transform: scale(1.08); /* gentle hover */
+}
+
+.delete-btn:hover {
+    background: #fff !important;
+}
+
+/* PRICE — unchanged */
+.price {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #14b8a6;
+    margin-bottom: .6rem;
+}
+
+/* BUY NOW BUTTON — slightly smaller */
+.buy-btn {
+    background: #fff;
+    color: #e05972ff;
+    width: 100%;
+    margin-top: .5rem; /* reduced gap */
+    padding: .65rem;
+    border-radius: 7px;
+    text-align: center;
+    display: inline-block;
+    transition: .25s ease;
+}
+
+{% comment %} .buy-btn:hover {
+    background: #FF4D6D;
+} {% endcomment %}
+
+/* Empty State */
+.empty {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 950px) {
+    .wishlist-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+    .wishlist-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .wishlist-img-box {
+        height: 200px;
+    }
+}
+
+</style>
 
 {% endblock %}

@@ -5,22 +5,20 @@
 
 {% block content %}
 
-
-
-<!-- ================= PRODUCT DETAIL SECTION ================= -->
-
+<!-- PRODUCT DETAIL WRAPPER -->
 <div class="product-detail-wrapper">
 
-    <!-- PRODUCT IMAGE -->
+    <!-- LEFT: PRODUCT IMAGE -->
     <div class="product-image-box">
         <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
     </div>
 
-    <!-- PRODUCT INFORMATION -->
+    <!-- RIGHT: PRODUCT DETAILS -->
     <div class="product-info">
 
         <h1 class="product-name">{{ product.product_name }}</h1>
-        <div class="product-price">$ {{ product.product_price }}</div>
+
+        <div class="product-price">₹{{ product.product_price }}</div>
 
         <!-- STOCK BADGES -->
         {% if product.product_stock > 9 %}
@@ -35,60 +33,164 @@
             {{ product.product_detail }}
         </p>
 
-        <!-- ACTION BUTTONS -->
+        <!-- ADD TO CART + WISHLIST -->
         <form action="{% url 'add_to_cart' product.id %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="qty" value="1">
 
             <div class="action-buttons">
 
-                <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}"
+                <button type="submit"
+                        formaction="{% url 'add_to_wishlist' product.id %}"
                         class="btn wishlist-btn">
                     Add to Wishlist
                 </button>
 
-                <button type="submit" class="btn">
+                <button type="submit" class="btn add-cart-btn">
                     Add to Cart
                 </button>
-            </div>
 
+            </div>
         </form>
 
-        <!-- BUY NOW BUTTON -->
-        <a href="{% url 'checkout' %}?get_id={{ product.id }}" class="btn"
-           style="margin-top: 18px; display:block; text-align:center;">
+        <!-- BUY NOW -->
+        <a href="{% url 'checkout' %}?get_id={{ product.id }}"
+           class="btn buy-now-btn">
             Buy Now
         </a>
-    </div>
-</div>
-
-
-
-<!-- ================= SIMILAR PRODUCTS SECTION ================= -->
-
-<div class="similar-section">
-    <h1>Similar Products</h1>
-    <img src="{% static 'image/separator-img.png' %}" alt="">
-
-    <div class="similar-grid">
-
-        {% if similar %}
-            {% for item in similar %}
-            <div class="similar-box">
-
-                <img src="{{ item.product_image.url }}" alt="{{ item.product_name }}">
-
-                <h3 class="similar-name">{{ item.product_name }}</h3>
-                <p class="similar-price">$ {{ item.product_price }}</p>
-
-                <a href="{% url 'view_product' item.id %}" class="small-btn">View</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No similar products found.</p>
-        {% endif %}
 
     </div>
 </div>
+
+
+<!-- ================= STYLING ================= -->
+<style>
+
+.product-detail-wrapper {
+    width: 85%;
+    margin: 4rem auto;
+    margin-bottom: 6rem;
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+/* PRODUCT IMAGE */
+.product-image-box {
+    width: 100%;
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    background: #fff;
+}
+
+.product-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+}
+
+/* PRODUCT INFORMATION */
+.product-info {
+    padding: 1rem;
+}
+
+.product-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: .6rem;
+    color: #222;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    color: #14b8a6;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* STOCK BADGES */
+.stock-status {
+    display: inline-block;
+    padding: .35rem .75rem;
+    border-radius: 6px;
+    font-size: .9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.stock-in  { background: #d4ffe1; color: #0f8f48; }
+.stock-out { background: #ffe0e0; color: #d93025; }
+.stock-low { background: #fff1cc; color: #b38700; }
+
+.product-desc {
+    margin: 1rem 0 1.8rem;
+    color: #444;
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    padding: .9rem 1rem;
+    font-size: 1rem;
+}
+
+.wishlist-btn {
+    background: #ffe5ec;
+    color: #d6336c;
+    border: 1px solid #ffb3c6;
+}
+
+.wishlist-btn:hover {
+    background: #ffccd9;
+}
+
+.add-cart-btn {
+    background: #14b8a6;
+    color: #fff;
+}
+
+.add-cart-btn:hover {
+    background: #11998e;
+}
+
+/* BUY NOW */
+.buy-now-btn {
+    background: #ff4d6d;
+    color: #fff;
+    padding: .95rem;
+    display: inline-block;
+    margin-top: 1.5rem;
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    border-radius: 6px;
+}
+
+.buy-now-btn:hover {
+    background: #e63c5c;
+}
+
+/* RESPONSIVE */
+@media (max-width: 850px) {
+    .product-detail-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .product-image-box {
+        height: 320px;
+    }
+}
+
+</style>
 
 {% endblock %}

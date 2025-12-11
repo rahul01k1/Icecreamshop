@@ -1,5 +1,5 @@
 from django.contrib import admin
-from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order 
+from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order , OrderItem
 
 
 
@@ -39,8 +39,11 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ("status", "payment_status")
     search_fields = ("buyer__user_name", "id")
 
-
-
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "order", "product", "seller", "price", "qty")
+    list_filter = ("seller",)
+    search_fields = ("order__id", "product__product_name")
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

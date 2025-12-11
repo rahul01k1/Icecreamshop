@@ -193,12 +193,12 @@
     gap:1rem;
   }
   .logout-btn {
-    color: #ff4444;
+    color: #E85C96;
     font-weight: bold;
 }
 
 .logout-btn:hover {
-    color: #d80000;
+    color: #fff;
 }
 
   .form-container .login {

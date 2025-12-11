@@ -124,7 +124,6 @@ def cart(request,):
 
     return render(request, "shop/cart.html", context)
 
-
 def add_to_cart(request,id):
     user_id = request.session.get("user_id")
     if not user_id:
@@ -151,7 +150,6 @@ def add_to_cart(request,id):
 
     return redirect("cart")
 
-
 def update_cart(request, id):
     if not request.session.get("user_id"):
         return JsonResponse({"error": "Not logged in"}, status=403)
@@ -173,7 +171,6 @@ def update_cart(request, id):
         "subtotal": cart_item.subtotal() if qty > 0 else 0,
         "total_amount": float(total_amount)
     })
-
 
 def remove_cart(request,id):
     cart_item = Cart.objects.get(id=id)
@@ -342,15 +339,30 @@ def remove_wishlist(request, id):
 def view_product(request, id):
     product = get_object_or_404(Product, id=id)
 
+    # CHECK IF USER LOGGED IN
+    user_id = request.session.get("buyer_id")
+
+    is_in_wishlist = False
+
+    if user_id:
+        is_in_wishlist = Wishlist.objects.filter(
+            user_id=user_id,
+            product=product
+        ).exists()
+
     return render(request, "shop/views/view_product.html", {
-        "product": product
+        "product": product,
+        "is_in_wishlist": is_in_wishlist,
     })
 
-def view_order(request, id):
-    order = get_object_or_404(Order, id=id)
-    order_items = order.items.all()
 
-    # Calculate total amount
+def view_order(request, id):
+
+    user_id = request.session.get("user_id")
+
+    order = get_object_or_404(Order, id=id, user_id=user_id)
+
+    order_items = order.items.all()
     total_amount = sum(item.total_price() for item in order_items)
 
     return render(request, "shop/views/view_order.html", {
@@ -379,6 +391,24 @@ def cancel_order(request, id):
     return redirect("view_order", id=id)
 
 
+# Add Cart And Wishlist Count:
+
+def cart_count(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"count": 0})
+
+    count = Cart.objects.filter(user_id=user_id).count()
+    return JsonResponse({"count": count})
+
+
+def wishlist_count(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"count": 0})
+
+    count = Wishlist.objects.filter(user_id=user_id).count()
+    return JsonResponse({"count": count})
 
 # Profile Functions
 def profile(request):
@@ -507,11 +537,11 @@ def download_invoice(request, order_id):
     items = order.items.all()
 
     # Create the PDF response
-    response_pdf = HttpResponse(content_type="application/pdf")
-    response_pdf["Content-Disposition"] = f'attachment; filename="Invoice_{order.id}.pdf"'
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="Invoice_{order.id}.pdf"'
 
     # Initialize PDF canvas
-    p = canvas.Canvas(response_pdf, pagesize=A4)
+    p = canvas.Canvas(response, pagesize=A4)
     width, height = A4
 
     y = height - 50
@@ -588,3 +618,5 @@ def download_invoice(request, order_id):
     p.save()
 
     return response
+
+

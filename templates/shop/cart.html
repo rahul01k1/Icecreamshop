@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} Blue Sky Summer - Home{% endblock title %}
+{% block title %}Blue Sky Summer - Cart{% endblock %}
 
 {% block content %}
-
 
 <div class="cart-container">
 
@@ -11,7 +10,6 @@
 
     <!-- CART ITEMS -->
     <div id="cart-items">
-
         {% for item in cart_items %}
         <div class="cart-card" id="cart-item-{{ item.id }}">
 
@@ -19,7 +17,7 @@
 
             <div class="cart-info">
                 <h3>{{ item.product.product_name }}</h3>
-                <p class="price">${{ item.price }}</p>
+                <p class="price">₹{{ item.price }}</p>
 
                 <label>Quantity:</label>
                 <input type="number"
@@ -30,71 +28,89 @@
             </div>
 
             <div style="margin-left:auto; text-align:right;">
-                <p><strong>Subtotal:</strong> $<span id="subtotal-{{ item.id }}">{{ item.subtotal }}</span></p>
+                <p><strong>Subtotal:</strong> ₹<span id="subtotal-{{ item.id }}">{{ item.subtotal }}</span></p>
 
                 <button class="remove-btn" onclick="removeItem({{ item.id }})">
                     Remove
                 </button>
             </div>
-
         </div>
         {% endfor %}
-
     </div>
 
-    <!-- TOTAL AREA -->
+    <!-- TOTAL BOX -->
     <div class="cart-total-box">
-        Total Amount: $<span id="total">{{ total_amount }}</span>
+        Total Amount: ₹<span id="total">{{ total_amount }}</span>
     </div>
 
     <br>
 
     <a class="empty-btn" onclick="emptyCart()">Empty Cart</a>
     <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
-
 </div>
+
+
+<!-- SWEETALERT + AJAX CART JS -->
 <script>
+// SweetAlert2 Toast
+function showAlert(type, message) {
+    Swal.fire({
+        icon: type,
+        title: message,
+        toast: true,
+        position: "top-end",
+        timer: 1500,
+        showConfirmButton: false
+    });
+}
 
-// Cart Ajax
+// Update Cart Count (Navbar)
+function updateCartCount() {
+    fetch("/cart_count/")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("cart-count").innerText = data.count;
+    });
+}
 
-// Dynamic Cart
-
+// Reload Entire Cart Section (optional)
 function reloadCart() {
     fetch("/cart/", {
         headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => res.json())
     .then(data => {
-
-        let container = document.getElementById("cart-items");
-        container.innerHTML = "";
+        let box = document.getElementById("cart-items");
+        box.innerHTML = "";
 
         data.items.forEach(item => {
-            container.innerHTML += `
+            box.innerHTML += `
                 <div class="cart-card" id="cart-item-${item.id}">
                     <img src="${item.product_image}" class="cart-img">
 
                     <div class="cart-info">
                         <h3>${item.product_name}</h3>
-                        <p class="price">$${item.price}</p>
+                        <p class="price">₹${item.price}</p>
+
                         <label>Qty:</label>
-                        <input type="number" value="${item.qty}" class="qty-box"
+                        <input type="number" class="qty-box"
+                               value="${item.qty}" min="1"
                                onchange="updateQty(${item.id}, this.value)">
                     </div>
 
                     <div style="margin-left:auto;">
-                        <p><strong>Subtotal:</strong> $${item.subtotal}</p>
+                        <p><strong>Subtotal:</strong> ₹${item.subtotal}</p>
                         <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
 
         document.getElementById("total").innerText = data.total_amount;
+        updateCartCount();
     });
 }
 
-
+// Update Quantity
 function updateQty(id, qty) {
     fetch(`/update_cart/${id}/`, {
         method: "POST",
@@ -108,10 +124,13 @@ function updateQty(id, qty) {
     .then(data => {
         document.getElementById(`subtotal-${id}`).innerText = data.subtotal;
         document.getElementById("total").innerText = data.total_amount;
+
+        showAlert("success", "Cart Updated");
+        updateCartCount();
     });
 }
 
-
+// Remove Single Item
 function removeItem(id) {
     fetch(`/remove_cart/${id}/`, {
         method: "POST",
@@ -120,29 +139,42 @@ function removeItem(id) {
     .then(res => res.json())
     .then(data => {
         document.getElementById(`cart-item-${id}`).style.opacity = "0";
+
         setTimeout(() => {
             document.getElementById(`cart-item-${id}`).remove();
             document.getElementById("total").innerText = data.total_amount;
-        }, 250);
+        }, 200);
+
+        showAlert("info", "Item Removed");
+        updateCartCount();
     });
 }
 
-
+// Empty Cart
 function emptyCart() {
-    fetch(`/empty_cart/`, {
-        method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-    })
-    .then(res => res.json())
-    .then(() => {
-        document.getElementById("cart-items").innerHTML = "";
-        document.getElementById("total").innerText = "0";
+    Swal.fire({
+        icon: "warning",
+        title: "Empty your cart?",
+        showCancelButton: true,
+        confirmButtonText: "Yes, empty",
+        cancelButtonText: "No"
+    }).then(result => {
+        if (result.isConfirmed) {
+            fetch(`/empty_cart/`, {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+            .then(res => res.json())
+            .then(() => {
+                document.getElementById("cart-items").innerHTML = "";
+                document.getElementById("total").innerText = "0";
+
+                showAlert("success", "Cart Emptied");
+                updateCartCount();
+            });
+        }
     });
 }
-
-
-
-
 </script>
 
-{% endblock content %}
+{% endblock %}

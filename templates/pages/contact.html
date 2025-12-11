@@ -1,126 +1,266 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} Blue Sky Summer - Contact Us{% endblock title %}
+{% block title %}Contact Us - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
-<!------------------------------------- Banner ------------------------------------>
-<div class="banner">
-    <div class="detail">
+<!-- ======================= Banner ======================= -->
+<section class="contact-hero">
+    <div class="hero-content">
         <h1>Contact Us</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-            From classic flavors to bold new creations, there's something delicious for everyone!</p>
+        <p>We are here to help you. Reach out to us anytime and we will respond as soon as possible.</p>
 
-        <span>
-            <a href="{% url 'home' %}">home</a>
-            <i class="bx bx-right-arrow-alt"></i> Contact Us
+        <span class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <i class="bx bx-chevron-right"></i> Contact Us
         </span>
     </div>
-</div>
+</section>
 
-<!-------------------------------------- Services ------------------------------------>
-<div class="services">
+<!-- ======================= Services Section ======================= -->
+<section class="services-section">
     <div class="heading">
         <h1>Our Services</h1>
-        <img src="{% static 'image/separator-img.png' %}">
+        <img src="{% static 'image/separator-img.png' %}" alt="">
     </div>
 
-    <div class="box-container">
-        <div class="box">
-            <img src="{% static 'image/0.png' %}">
-            <div>
-                <h1>Free Shipping Fast</h1>
-                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
-            </div>
+    <div class="service-grid">
+        <div class="service-card">
+            <img src="{% static 'image/0.png' %}" alt="">
+            <h3>Free & Fast Shipping</h3>
+            <p>Your favorite products delivered right to your doorstep quickly and safely.</p>
         </div>
 
-        <div class="box">
-            <img src="{% static 'image/1.png' %}">
-            <div>
-                <h1>Money Back Guarantee</h1>
-                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
-            </div>
+        <div class="service-card">
+            <img src="{% static 'image/1.png' %}" alt="">
+            <h3>Money Back Guarantee</h3>
+            <p>Customer satisfaction is our priority. Get your refund without hassle.</p>
         </div>
 
-        <div class="box">
-            <img src="{% static 'image/2.png' %}">
-            <div>
-                <h1>24/7 Support</h1>
-                <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.</p>
-            </div>
+        <div class="service-card">
+            <img src="{% static 'image/2.png' %}" alt="">
+            <h3>24/7 Customer Support</h3>
+            <p>We are available all day, every day to help you with any questions.</p>
         </div>
     </div>
-</div>
+</section>
 
-<!-------------------------------------- Contact Form ------------------------------------>
-<div class="form-container">
+<!-- ======================= Contact Form ======================= -->
+<section class="contact-form-section">
     <div class="heading">
-        <h1>Drop Us a Line</h1>
-        <p>Just a few clicks to reach us</p>
-        <img src="{% static 'image/separator-img.png' %}">
+        <h1>Drop Us a Message</h1>
+        <p>We’d love to hear from you</p>
+        <img src="{% static 'image/separator-img.png' %}" alt="">
     </div>
 
-    <form method="POST" action="" class="register">
+    <form method="POST" class="contact-form">
         {% csrf_token %}
-        <div class="input-field">
-            <label>Name <sup>*</sup></label>
-            <input type="text" name="name" required placeholder="Enter your name"  class="box">
+
+        <div class="input-row">
+            <div class="input-field">
+                <label>Name <sup>*</sup></label>
+                <input type="text" name="name" required placeholder="Enter your name" class="box">
+            </div>
+
+            <div class="input-field">
+                <label>Email <sup>*</sup></label>
+                <input type="email" name="email" required placeholder="Enter your email" class="box">
+            </div>
         </div>
-        <div class="input-field">
-            <label>Email <sup>*</sup></label>
-            <input type="email" name="email" required placeholder="Enter your email" class="box">
-        </div>
+
         <div class="input-field">
             <label>Subject <sup>*</sup></label>
-            <input type="text" name="subject" required placeholder="Reason..." class="box">
+            <input type="text" name="subject" required placeholder="Subject" class="box">
         </div>
+
         <div class="input-field">
-            <label>Comment <sup>*</sup></label>
-            <textarea name="message" cols="15" rows="8" required placeholder="Your message" class="box"></textarea>
+            <label>Message <sup>*</sup></label>
+            <textarea name="message" cols="30" rows="8" required placeholder="Write your message..." class="box"></textarea>
         </div>
 
-        <button type="submit" name="send_message" class="btn">Send Message</button>
+        <button type="submit" class="btn">Send Message</button>
     </form>
-</div>
+</section>
 
-<!------------------------------------- Address Section ------------------------------------>
-<div class="address">
+<!-- ======================= Address Section ======================= -->
+<section class="address-section">
     <div class="heading">
-        <h1>Our Contact Details</h1>
-        <p>Just a few clicks to connect with us</p>
-        <img src="{% static 'image/separator-img.png' %}">
+        <h1>Get in Touch</h1>
+        <p>We’re always ready to assist you</p>
+        <img src="{% static 'image/separator-img.png' %}" alt="">
     </div>
 
-    <div class="box-container">
-        <div class="box">
-            <i class="bx bxs-map-alt"></i>
-            <div>
-                <h4>Address</h4>
-                <p>Ahmedabad , Gujrat 380015</p>
-                <p>India</p>
-            </div>
+    <div class="address-grid">
+
+        <div class="address-card">
+            <i class="bx bxs-map"></i>
+            <h4>Address</h4>
+            <p>Ahmedabad, Gujarat 380015</p>
+            <p>India</p>
         </div>
 
-        <div class="box">
-            <i class="bx bxs-phone-incoming"></i>
-            <div>
-                <h4>Phone Number</h4>
-                <p>Vipul Lilapara</p>
-                <p>7041998854</p>
-            </div>
+        <div class="address-card">
+            <i class="bx bxs-phone"></i>
+            <h4>Phone</h4>
+            <p>Vipul Lilapara</p>
+            <p>+91 70419 98854</p>
         </div>
 
-        <div class="box">
+        <div class="address-card">
             <i class="bx bxs-envelope"></i>
-            <div>
-                <h4>Email</h4>
-                <p>lilaparavipul123@gmail.com</p>
-                <p>lilaparavipul122@gmail.com</p>
-            </div>
+            <h4>Email</h4>
+            <p>lilaparavipul123@gmail.com</p>
+            <p>lilaparavipul122@gmail.com</p>
         </div>
+
     </div>
-</div>
+</section>
+<style>
+
+.contact-hero {
+    background: linear-gradient(to right, #d8ecff, #fef5ff);
+    padding: 90px 0;
+    text-align: center;
+}
+
+.contact-hero h1 {
+    font-size: 46px;
+    font-weight: 800;
+    color: #333;
+}
+
+.contact-hero p {
+    width: 55%;
+    margin: 15px auto 0;
+    color: #555;
+    font-size: 18px;
+}
+
+.breadcrumb {
+    margin-top: 15px;
+    font-size: 15px;
+    color: #777;
+}
+
+.breadcrumb a {
+    color: #007bff;
+}
 
 
-{% endblock content %}
+/* ====================== Services ====================== */
 
+.services-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.service-grid {
+    width: 88%;
+    margin: 40px auto 0;
+    display: grid;
+    gap: 35px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.service-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    transition: .3s;
+}
+
+.service-card:hover {
+    transform: translateY(-6px);
+}
+
+.service-card img {
+    width: 80px;
+    margin-bottom: 18px;
+}
+
+.service-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+
+/* ====================== Contact Form ====================== */
+
+.contact-form-section {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.contact-form {
+    width: 75%;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 55px 60px;                  /* Increased padding */
+    border-radius: 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.10);
+}
+
+.input-row {
+    display: flex;
+    gap: 35px;                          /* More space between columns */
+    margin-bottom: 15px;
+}
+
+.input-field {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 15px;               /* Larger bottom space */
+}
+
+.input-field label {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.box {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 15px;                /* Bigger inputs */
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+
+/* ====================== Address Section ====================== */
+
+.address-section {
+    padding: 90px 0 110px;
+    text-align: center;
+}
+
+.address-grid {
+    width: 88%;
+    margin: 50px auto;
+    display: grid;
+    gap: 35px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.address-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.address-card i {
+    font-size: 45px;
+    color: #ff6eae;
+    margin-bottom: 12px;
+}
+
+.address-card h4 {
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+</style>
+
+{% endblock %}

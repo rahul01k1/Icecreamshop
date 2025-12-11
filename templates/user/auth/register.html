@@ -5,60 +5,135 @@
 
 {% block content %}
 
-<!-- Banner Section -->
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>Register</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-            From classic flavors to bold new creations, there's something delicious for everyone!
-        </p>
-        <span>
-            <a href="{% url 'home' %}">Home</a>
-            <i class="bx bx-right-arrow-alt"></i> Register
-        </span>
-    </div>
-</div> {% endcomment %}
+<style>
+/* ------------------ Enhanced Register UI ------------------ */
 
-<!-- Register Form -->
-<div class="form-container">
-    <form method="post" enctype="multipart/form-data" class="register">
+.register-wrapper {
+    width: 80%;
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 60px 70px;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+}
+
+.register-wrapper h2 {
+    font-size: 42px;
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.register-wrapper p.subtitle {
+    text-align: center;
+    font-size: 17px;
+    color: #666;
+    margin-bottom: 35px;
+}
+
+/* Form styling */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px; 
+}
+
+.input-field label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #444;
+}
+
+.input-field .box {
+    margin-top: 8px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.profile-upload {
+    margin-top: 35px;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    background: #ff7ea7;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 25px;
+    transition: .3s;
+}
+
+.btn-register:hover {
+    background: #ff628f;
+}
+
+.login-link {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.login-link a {
+    color: #007bff;
+    font-weight: 600;
+}
+
+</style>
+
+
+<div class="register-wrapper">
+
+    <h2>Create Your Account</h2>
+    <p class="subtitle">Join The Blue Summer and enjoy a smooth shopping experience.</p>
+
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <h3>Register Now</h3>
 
-        <div class="flex">
-            <div class="cols">
-                <div class="input-field">
-                    <p>Your Name <span>*</span></p>
-                    <input type="text" name="name" placeholder="Enter Your Name" maxlength="50" required class="box">
-                </div>
+        <div class="form-grid">
 
-                <div class="input-field">
-                    <p>Your Email <span>*</span></p>
-                    <input type="email" name="email" placeholder="Enter Your Email" maxlength="50" required class="box">
-                </div>
-
-                <div class="input-field">
-                    <p>Your Password <span>*</span></p>
-                    <input type="password" name="password" placeholder="Enter Your Password" maxlength="50" required class="box">
-                </div>
-
-                <div class="input-field">
-                    <p>Confirm Password <span>*</span></p>
-                    <input type="password" name="cpassword" placeholder="Enter Your Password" maxlength="50" required class="box">
-                </div>
+            <div class="input-field">
+                <label>Your Name *</label>
+                <input type="text" name="name" placeholder="Enter Your Name" maxlength="50" required class="box">
             </div>
+
+            <div class="input-field">
+                <label>Your Email *</label>
+                <input type="email" name="email" placeholder="Enter Your Email" maxlength="50" required class="box">
+            </div>
+
+            <div class="input-field">
+                <label>Password *</label>
+                <input type="password" name="password" placeholder="Enter Your Password" maxlength="50" required class="box">
+            </div>
+
+            <div class="input-field">
+                <label>Confirm Password *</label>
+                <input type="password" name="cpassword" placeholder="Confirm Password" maxlength="50" required class="box">
+            </div>
+
         </div>
 
-        <div class="input-field">
-            <p>Your Profile <span>*</span></p>
+        <div class="input-field profile-upload">
+            <label>Your Profile Image *</label>
             <input type="file" name="profile_image" accept="image/*" required class="box">
         </div>
 
-        <p class="link">Already have an account?
+        <button type="submit" class="btn-register">Register Now</button>
+
+        <p class="login-link">
+            Already have an account?
             <a href="{% url 'login' %}">Login Now</a>
         </p>
 
-        <input type="submit" value="Register Now" class="btn">
     </form>
 </div>
+
 {% endblock %}
