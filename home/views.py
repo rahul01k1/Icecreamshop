@@ -5,8 +5,6 @@ from django.contrib.auth import login , logout
 from django.contrib.auth.hashers import make_password , check_password
 from django.contrib import messages
 from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order , OrderItem
-from django.core.files.storage import FileSystemStorage
-from django.core.exceptions import ValidationError
 import json
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -272,6 +270,7 @@ def checkout(request):
     })
 
 def order_success(request, order_id):
+
     order = get_object_or_404(Order, id=order_id)
 
     order_items = order.items.all()   # related_name="items"
@@ -283,26 +282,59 @@ def order_success(request, order_id):
         "order_items": order_items,
         "total_amount": total_amount
     })
+
 def wishlist(request):
-    return render(request,"shop/wishlist.html")
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
 
+    user = Buyer.objects.get(id=user_id)
+    items = Wishlist.objects.filter(user=user)
 
-def toggle_wishlist(request, id):
+    return render(request, "shop/wishlist.html", {"items": items})
+
+def add_to_wishlist(request, id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = Buyer.objects.get(id=user_id)
     product = Product.objects.get(id=id)
-    user = request.user
 
-    if Wishlist.objects.filter(user=user, product=product).exists():
-        Wishlist.objects.filter(user=user, product=product).delete()
-        return JsonResponse({"status": "removed"})
-    else:
-        Wishlist.objects.create(user=user, product=product)
-        return JsonResponse({"status": "added"})
+    Wishlist.objects.get_or_create(
+        user=user,
+        product=product,
+        defaults={"price": product.product_price}
+    )
 
-
-def add_to_wishlist(request,id):
     return redirect("wishlist")
 
-def remove_wishlist(request,id):
+def toggle_wishlist(request, id):
+
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "Login required"}, status=403)
+
+    user = Buyer.objects.get(id=user_id)
+    product = Product.objects.get(id=id)
+
+    wishlist_item = Wishlist.objects.filter(user=user, product=product)
+
+    if wishlist_item.exists():
+        wishlist_item.delete()
+        return JsonResponse({"status": "removed"})
+    else:
+        Wishlist.objects.create(user=user, product=product, price=product.product_price)
+        return JsonResponse({"status": "added"})
+
+def remove_wishlist(request, id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = Buyer.objects.get(id=user_id)
+    Wishlist.objects.filter(id=id, user=user).delete()
+
     return redirect("wishlist")
 
   #  Views Function 
@@ -327,21 +359,73 @@ def view_order(request, id):
         "total_amount": total_amount,
     })
 
-def cancel_order(request,id):
+def cancel_order(request, id):
 
-    return redirect("view_order")
+    order = get_object_or_404(Order, id=id)
+
+    # update status
+    order.status = "canceled"
+    order.payment_status = "pending"
+    order.save()
+
+    # restore product stock
+    for item in order.items.all():
+        product = item.product
+        product.product_stock += item.qty
+        product.save()
+
+    messages.success(request, "Order canceled successfully!")
+
+    return redirect("view_order", id=id)
 
 
 
 # Profile Functions
 def profile(request):
-    return render(request,"user/profile.html")
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = Buyer.objects.get(id=user_id)
+
+    return render(request, "user/profile.html", {
+        "user": user
+    })
 
 def update_profile(request):
-    return render(request,"user/update_profile.html")
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = Buyer.objects.get(id=user_id)
+
+    if request.method == "POST":
+        user.user_name = request.POST.get("user_name")
+        user.user_email = request.POST.get("user_email")
+        user.user_password = request.POST.get("user_password")   # plain password (you can hash later)
+
+        if "user_image" in request.FILES:
+            user.user_image = request.FILES["user_image"]
+
+        user.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect("profile")
+
+    return render(request, "user/update_profile.html", {
+        "user": user
+    })
 
 def user_messages(request):
-    return render(request,"user/messages.html")
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = Buyer.objects.get(id=user_id)
+    messages_list = Message.objects.filter(user=user)
+
+    return render(request, "user/messages.html", {
+        "messages_list": messages_list
+    })
 
 
 # Authenticate Functions

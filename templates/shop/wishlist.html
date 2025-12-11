@@ -1,73 +1,90 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} Blue Sky Summer - My Wishlist{% endblock title %}
+{% block title %}Blue Sky Summer – My Wishlist{% endblock %}
 
 {% block content %}
 
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>My Wishlist</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-        From classic flavors to bold new creations, there's something delicious for everyone!</p>
-        <span><a href="{% url 'home' %}">home</a> <i class="bx bx-right-arrow-alt"></i> My Wishlist</span>
-    </div>
-</div> {% endcomment %}
+<div class="products wishlist-page">
 
-<div class="products">
     <div class="heading">
-        <h1>Wishlist Items</h1>
+        <h1>My Wishlist</h1>
+        <p>Save your favorite delights and shop whenever you're ready.</p>
         <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
     </div>
 
     <div class="box-container">
 
         {% if items %}
-            {% for item in items %}
-            <div class="box {% if item.product.stock == 0 %}disabled{% endif %}">
-                <img src="{{ item.product.image.url }}" class="image" alt="{{ item.product.name }}">
 
-                {% if item.product.stock > 9 %}
-                    <span class="stock" style="color: green;">In stock</span>
-                {% elif item.product.stock == 0 %}
-                    <span class="stock" style="color: red;">Out of stock</span>
+            {% for item in items %}
+            <div class="box wishlist-card {% if item.product.product_stock == 0 %}disabled{% endif %}">
+
+                <!-- PRODUCT IMAGE -->
+                <div class="wishlist-img-wrapper">
+                    <img src="{{ item.product.product_image.url }}" class="image" alt="{{ item.product.product_name }}">
+                </div>
+
+                <!-- STOCK LABEL -->
+                {% if item.product.product_stock > 9 %}
+                    <span class="stock in-stock">In Stock</span>
+                {% elif item.product.product_stock == 0 %}
+                    <span class="stock out-stock">Out of Stock</span>
                 {% else %}
-                    <span class="stock" style="color: red;">Hurry, only {{ item.product.stock }} left</span>
+                    <span class="stock low-stock">Only {{ item.product.product_stock }} left</span>
                 {% endif %}
 
                 <div class="content">
                     <img src="{% static 'image/shape-19.png' %}" class="shap" alt="">
-                    <div class="button">
-                        <h3>{{ item.product.name }}</h3>
-                        <div class="actions">
 
-                            <form action="{% url 'add_to_cart' item.product.id %}" method="post" style="display:inline;">
+                    <!-- PRODUCT TITLE + ACTIONS -->
+                    <div class="wishlist-header">
+                        <h3 class="name">{{ item.product.product_name }}</h3>
+
+                        <div class="wishlist-actions">
+
+                            <!-- ADD TO CART -->
+                            <form action="{% url 'add_to_cart' item.product.id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit"><img src="{% static 'image/icon/cart.png' %}"></button>
+                                <button type="submit" class="icon-btn" title="Add to Cart">
+                                    <img src="{% static 'image/icon/cart.png' %}" alt="Cart">
+                                </button>
                             </form>
 
-                            <a href="{% url 'view_product' item.product.id %}">
-                                <img src="{% static 'image/icon/eye.png' %}">
+                            <!-- VIEW PRODUCT -->
+                            <a href="{% url 'view_product' item.product.id %}" class="icon-btn" title="View Product">
+                                <img src="{% static 'image/icon/eye.png' %}" alt="View">
                             </a>
 
-                            <a href="{% url 'remove_wishlist' item.id %}" onclick="return confirm('Remove from wishlist?');">
-                                <img src="{% static 'image/icon/delete.png' %}">
+                            <!-- REMOVE -->
+                            <a href="{% url 'remove_wishlist' item.id %}"
+                               onclick="return confirm('Remove from wishlist?');"
+                               class="icon-btn delete"
+                               title="Remove">
+                                <img src="{% static 'image/icon/trash.png' %}" alt="Delete">
                             </a>
+
                         </div>
                     </div>
 
-                    <p class="price">Price: ${{ item.price }}/-</p>
-                    <a href="{% url 'checkout' %}?get_id={{ item.product.id }}" class="btn">Buy Now</a>
+                    <!-- PRICE -->
+                    <p class="price">₹{{ item.price }}</p>
+
+                    <!-- BUY NOW BUTTON -->
+                    <a href="{% url 'checkout' %}?get_id={{ item.product.id }}" class="btn buy-btn">
+                        Buy Now
+                    </a>
+
                 </div>
             </div>
             {% endfor %}
+
         {% else %}
             <div class="empty">
-                <p>No products added yet!</p>
+                <p>Your wishlist is empty! Start adding some treats.</p>
             </div>
         {% endif %}
 
     </div>
 </div>
 
-
-{% endblock content %}
+{% endblock %}
