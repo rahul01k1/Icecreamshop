@@ -1,22 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} My Orders - The Blue Summer{% endblock title %}
+{% block title %}My Orders - The Blue Summer{% endblock %}
 
 {% block content %}
-
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>My Orders</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-        From classic flavors to bold new creations, there's something delicious for everyone!</p>
-        <span><a href="{% url 'home' %}">home</a><i class="bx bx-right-arrow-alt"></i> My Orders</span>
-    </div>
-</div> {% endcomment %}
 
 <div class="products">
     <div class="heading">
         <h1>Your Order History</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
+        <img src="{% static 'image/separator-img.png' %}" alt="">
     </div>
 
     <div class="box-container">
@@ -24,22 +15,28 @@
         {% if orders %}
             {% for order in orders %}
             <div class="box">
-                <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="image">
+
+                <!-- Show first product image from the order -->
+                {% with first_item=order.items.first %}
+                    {% if first_item %}
+                        <img src="{{ first_item.product.product_image.url }}" class="image">
+                    {% endif %}
+                {% endwith %}
 
                 <div class="content">
-                    <img src="{% static 'image/shape-19.png' %}" class="shap" alt="shape">
+                    <img src="{% static 'image/shape-19.png' %}" class="shap">
 
-                    <h3 class="name">{{ order.product.name }}</h3>
+                    <h3 class="name">Order #{{ order.id }}</h3>
 
-                    <p class="price">Price: ${{ order.price }}/-</p>
-
-                    <p class="qty">Qty : {{ order.qty }}</p>
+                    <p class="price">
+                        Total Amount: ${{ order.order_total }}
+                    </p>
 
                     <p class="date">
                         <i class="bx bxs-calendar-alt"></i> {{ order.date|date:"M d, Y" }}
                     </p>
 
-                    <p>Status :
+                    <p>Status:
                         {% if order.status == "delivered" %}
                             <span style="color: green;">Delivered</span>
                         {% elif order.status == "canceled" %}
@@ -49,8 +46,8 @@
                         {% endif %}
                     </p>
 
-                    <p>Payment :
-                        {% if order.payment_status == "order delivered" %}
+                    <p>Payment:
+                        {% if order.payment_status == "Paid" %}
                             <span style="color: green;">Paid</span>
                         {% else %}
                             <span style="color: red;">Pending</span>
@@ -62,13 +59,17 @@
 
                         {% if order.status != "canceled" %}
                         <a href="{% url 'cancel_order' order.id %}" class="btn"
-                           onclick="return confirm('Cancel this order?');">Cancel</a>
+                           onclick="return confirm('Cancel this order?');">
+                           Cancel
+                        </a>
                         {% endif %}
                     </div>
+
                 </div>
             </div>
             {% endfor %}
         {% else %}
+        
             <div class="empty">
                 <p>No orders placed yet!</p>
             </div>
@@ -77,5 +78,4 @@
     </div>
 </div>
 
-
-{% endblock content%}
+{% endblock %}

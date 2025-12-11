@@ -1,7 +1,147 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} Blue Sky Summer - Home{% endblock title %}
+{% block title %}Checkout - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
-{% endblock content %}
+<div class="checkout-wrapper">
+
+    <!-- Billing Section -->
+    <div class="billing-card">
+        <h2 class="billing-title">Billing Details</h2>
+
+        <!-- AJAX ERROR -->
+        <p id="checkout-error" style="color:red; display:none;"></p>
+
+        <!-- AJAX SUCCESS -->
+        <p id="checkout-success" style="color:green; display:none;"></p>
+
+        <form id="checkoutForm">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <p>Your Name *</p>
+                    <input type="text" name="name" class="input" required value="{{ user.user_name }}">
+                </div>
+
+                <div class="form-group">
+                    <p>Address Type *</p>
+                    <select name="address_type" class="input">
+                        <option value="Home">Home</option>
+                        <option value="Office">Office</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <p>Your Email *</p>
+                    <input type="email" name="email" class="input" required value="{{ user.user_email }}">
+                </div>
+
+                <div class="form-group">
+                    <p>Full Address *</p>
+                    <input type="text" name="address" class="input" placeholder="House No., Street, Area" required>
+                </div>
+
+                <div class="form-group">
+                    <p>Your Number *</p>
+                    <input type="text" name="number" class="input" placeholder="Enter your number" required>
+                </div>
+
+                <div class="form-group">
+                    <p>Payment Method *</p>
+                    <select name="method" class="input">
+                        <option value="cod">Cash On Delivery (COD)</option>
+                        <option value="credit_debit_card">Credit/Debit Card</option>
+                        <option value="upi">UPI/RuPay</option>
+                        <option value="bank_transfer">Net Banking Transfer</option>
+                        <option value="gpay">GPay</option>
+                        <option value="phonepe">PhonePe</option>
+                        <option value="paytm">Paytm</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="button" class="btn-place-order" onclick="placeOrder()">Place Order</button>
+
+        </form>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="summary-card">
+        <h2 class="summary-title">Your Bag</h2>
+
+        {% for item in cart_items %}
+        <div class="item">
+            <img src="{{ item.product.product_image.url }}">
+            <div>
+                <h4>{{ item.product.product_name }}</h4>
+                <p class="price">${{ item.price }} × {{ item.qty }}</p>
+                <p>Subtotal: <strong>${{ item.subtotal }}</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="total-box">
+            Total Amount Payable: ${{ total_amount }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= AJAX CHECKOUT SCRIPT ================= -->
+
+<script>
+function placeOrder() {
+    let form = document.getElementById("checkoutForm");
+
+    let data = {
+        name: form.name.value,
+        email: form.email.value,
+        number: form.number.value,
+        address: form.address.value,
+        address_type: form.address_type.value,
+        method: form.method.value
+    };
+
+    fetch("", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        
+        // Show errors
+        if (response.error) {
+            let err = document.getElementById("checkout-error");
+            err.innerText = response.error;
+            err.style.display = "block";
+            return;
+        }
+
+        // Show success
+        if (response.success) {
+            let msg = document.getElementById("checkout-success");
+            msg.innerText = "Order placed successfully!";
+            msg.style.display = "block";
+
+            // Redirect to order success page
+            setTimeout(() => {
+                window.location.href = response.redirect_url;
+            }, 1000);
+        }
+    });
+}
+</script>
+
+{% endblock %}

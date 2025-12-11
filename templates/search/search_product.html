@@ -1,58 +1,63 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Search_Product - Blue Sky Summer{% endblock title %}
+{% block title %}Search Product - Blue Sky Summer{% endblock %}
 
 {% block content %}
-<div class="products">
-    <div class="heading">
-        <h1>Search Products</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="Separator Image">
-    </div>
 
-    <div class="box-container">
+
+<div class="search-wrapper">
+
+    <h1 class="search-title">Search Results</h1>
+    <img src="{% static 'image/separator-img.png' %}" class="search-separator" width="180">
+
+    <div class="product-grid">
+
         {% if products %}
             {% for product in products %}
-            <form action="" method="post" class="box {% if product.product_stock == 0 %}disabled{% endif %}">
+            <form action="{% url 'add_to_cart' product.id %}" method="post" class="product-card">
                 {% csrf_token %}
 
-                <img src="{{ product.product_image.url }}" alt="Product Image" class="image">
-
+                <!-- STOCK BADGE -->
                 {% if product.product_stock > 9 %}
-                    <span class="stock" style="color: green;">In Stock</span>
+                    <span class="stock-badge stock-green">In Stock</span>
                 {% elif product.product_stock == 0 %}
-                    <span class="stock" style="color: red;">Out of Stock</span>
+                    <span class="stock-badge stock-red">Out of Stock</span>
                 {% else %}
-                    <span class="stock" style="color: red;">Hurry, only {{ product.product_stock }} left!</span>
+                    <span class="stock-badge stock-red">Only {{ product.product_stock }} left!</span>
                 {% endif %}
 
-                <div class="content">
-                    <img src="{% static 'image/shape-19.png' %}" class="shap">
+                <!-- IMAGE -->
+                <img src="{{ product.product_image.url }}" class="main-img" alt="">
 
-                    <div class="button">
-                        <div><h3 class="name">{{ product.product_name }}</h3></div>
+                <!-- DETAILS -->
+                <div class="card-body">
 
-                        <div>
-                            <button type="submit" name="add_to_cart">
-                                <i class="bx bx-cart"></i>
-                            </button>
+                    <div class="product-name">{{ product.product_name }}</div>
 
-                            <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}" name="add_to_wishlist">
+                    <div class="product-price">₹{{ product.product_price }}</div>
+
+                    <!-- ACTION ICONS -->
+                    <div class="card-actions">
+                        <div class="action-icons">
+                            <button type="submit"><i class="bx bx-cart"></i></button>
+                            <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}">
                                 <i class="bx bx-heart"></i>
                             </button>
-
                             <a href="{% url 'view_product' product.id %}" class="bx bxs-show"></a>
                         </div>
                     </div>
 
-                    <p class="price">Price: ₹{{ product.product_price }}</p>
                     <input type="hidden" name="product_id" value="{{ product.id }}">
 
-                    <div class="flex-btn">
-                        <a href="{% url 'checkout' product.id %}" class="btn">Buy Now</a>
+                    <!-- BUY NOW + QTY -->
+                    <div class="buy-section">
+                        <a href="{% url 'checkout' %}?get_id={{ product.id }}" class="buy-btn">Buy Now</a>
 
-                        <input type="number" name="qty" required min="1" value="1" max="99" maxlength="2" class="qty box">
+                        <input type="number" name="qty" min="1" max="99" value="1" class="qty-input">
                     </div>
+
                 </div>
+
             </form>
             {% endfor %}
         {% else %}
@@ -60,7 +65,10 @@
                 <p>No products found!</p>
             </div>
         {% endif %}
+        
     </div>
+
 </div>
 
-{% endblock content %}
+
+{% endblock %}

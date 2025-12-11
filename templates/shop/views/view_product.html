@@ -1,129 +1,94 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}View Product - Blue Sky Summer{% endblock title %}
+
+{% block title %}{{ product.product_name }} - Product Detail{% endblock %}
 
 {% block content %}
 
-{% comment %} <div class="banner">
-    <div class="detail">
-        <h1>product detail</h1>
-        <p>Step into a world of creamy indulgence where each bite is a moment of pure bliss.
-        From classic flavors to bold new creations, there's something delicious for everyone!</p>
 
-        <span>
-            <a href="{% url 'home' %}">home</a>
-            <i class="bx bx-right-arrow-alt"></i> product detail
-        </span>
-    </div>
-</div> {% endcomment %}
 
-<section class="view_page">
-    <div class="heading">
-        <h1>Product Detail</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="Separator">
+<!-- ================= PRODUCT DETAIL SECTION ================= -->
+
+<div class="product-detail-wrapper">
+
+    <!-- PRODUCT IMAGE -->
+    <div class="product-image-box">
+        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
     </div>
 
-    <form action="{% url 'add_to_cart' product.id %}" method="post" class="box">
-        {% csrf_token %}
+    <!-- PRODUCT INFORMATION -->
+    <div class="product-info">
 
-        <div class="img-box">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-        </div>
+        <h1 class="product-name">{{ product.product_name }}</h1>
+        <div class="product-price">$ {{ product.product_price }}</div>
 
-        <div class="detail">
+        <!-- STOCK BADGES -->
+        {% if product.product_stock > 9 %}
+            <span class="stock-status stock-in">In Stock</span>
+        {% elif product.product_stock == 0 %}
+            <span class="stock-status stock-out">Out of Stock</span>
+        {% else %}
+            <span class="stock-status stock-low">Hurry! Only {{ product.product_stock }} left</span>
+        {% endif %}
 
-            {% if product.stock > 9 %}
-                <span class="stock" style="color: green;">In stock</span>
-            {% elif product.stock == 0 %}
-                <span class="stock" style="color: red;">Out of stock</span>
-            {% else %}
-                <span class="stock" style="color: red;">Hurry, only {{ product.stock }} left</span>
-            {% endif %}
+        <p class="product-desc">
+            {{ product.product_detail }}
+        </p>
 
-            <p class="price">${{ product.price }}/-</p>
-
-            <div class="name">{{ product.name }}</div>
-            <p class="product-detail">{{ product.product_detail }}</p>
-
-            <input type="hidden" name="product_id" value="{{ product.id }}">
+        <!-- ACTION BUTTONS -->
+        <form action="{% url 'add_to_cart' product.id %}" method="post">
+            {% csrf_token %}
             <input type="hidden" name="qty" value="1">
 
-            <div class="button">
+            <div class="action-buttons">
 
-                <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}" class="btn">
-                    Add to wishlist <i class="bx bx-heart"></i>
+                <button type="submit" formaction="{% url 'add_to_wishlist' product.id %}"
+                        class="btn wishlist-btn">
+                    Add to Wishlist
                 </button>
 
                 <button type="submit" class="btn">
-                    Add to cart <i class="bx bx-cart"></i>
+                    Add to Cart
                 </button>
-
             </div>
-        </div>
-    </form>
-</section>
 
-<!-- SIMILAR PRODUCTS ---------------------------------------------------->
-<div class="products">
-    <div class="heading">
-        <h1>Similar Products</h1>
-        <p>Explore more delicious flavors curated just for you</p>
-        <img src="{% static 'image/separator-img.png' %}" alt="Separator">
-    </div>
+        </form>
 
-    <div class="box-container">
-        {% if similar %}
-            {% for item in similar %}
-            <form action="{% url 'add_to_cart' item.id %}" method="post"
-                  class="box {% if item.stock == 0 %}disabled{% endif %}">
-                {% csrf_token %}
-
-                <img src="{{ item.image.url }}" alt="Product Image" class="image">
-
-                {% if item.stock > 9 %}
-                    <span class="stock" style="color: green;">In Stock</span>
-                {% elif item.stock == 0 %}
-                    <span class="stock" style="color: red;">Out of Stock</span>
-                {% else %}
-                    <span class="stock" style="color: red;">Hurry, only {{ item.stock }} left!</span>
-                {% endif %}
-
-                <div class="content">
-                    <img src="{% static 'image/shape-19.png' %}" alt="" class="shap">
-
-                    <div class="button">
-                        <h3 class="name">{{ item.name }}</h3>
-
-                        <div>
-                            <button type="submit">
-                                <img src="{% static 'image/icon/cart.png' %}">
-                            </button>
-
-                            <button type="submit" formaction="{% url 'add_to_wishlist' item.id %}">
-                                <img src="{% static 'image/icon/wl.png' %}">
-                            </button>
-
-                            <a href="{% url 'view_product' item.id %}" class="bx bxs-show"></a>
-                        </div>
-                    </div>
-
-                    <p class="price">Price: ${{ item.price }}</p>
-                    <input type="hidden" name="product_id" value="{{ item.id }}">
-
-                    <div class="flex-btn">
-                        <a href="{% url 'checkout' %}?get_id={{ item.id }}" class="btn">Buy Now</a>
-                        <input type="number" name="qty" min="1" max="99" value="1" class="qty box">
-                    </div>
-                </div>
-            </form>
-            {% endfor %}
-        {% else %}
-            <div class="empty">
-                <p>No similar products found!</p>
-            </div>
-        {% endif %}
+        <!-- BUY NOW BUTTON -->
+        <a href="{% url 'checkout' %}?get_id={{ product.id }}" class="btn"
+           style="margin-top: 18px; display:block; text-align:center;">
+            Buy Now
+        </a>
     </div>
 </div>
 
 
-{% endblock content%}
+
+<!-- ================= SIMILAR PRODUCTS SECTION ================= -->
+
+<div class="similar-section">
+    <h1>Similar Products</h1>
+    <img src="{% static 'image/separator-img.png' %}" alt="">
+
+    <div class="similar-grid">
+
+        {% if similar %}
+            {% for item in similar %}
+            <div class="similar-box">
+
+                <img src="{{ item.product_image.url }}" alt="{{ item.product_name }}">
+
+                <h3 class="similar-name">{{ item.product_name }}</h3>
+                <p class="similar-price">$ {{ item.product_price }}</p>
+
+                <a href="{% url 'view_product' item.id %}" class="small-btn">View</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No similar products found.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

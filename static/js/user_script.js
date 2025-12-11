@@ -100,4 +100,3 @@ function toggleWishlist(btn, productId) {
         .catch(err => console.log(err));
 }
 
-

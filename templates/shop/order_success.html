@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Success{% endblock %}
+
+{% block content %}
+
+<div class="success-wrapper">
+
+    <div class="success-header">
+        <div class="success-icon">✔</div>
+        <h2>Your Order is Confirmed!</h2>
+        <p>Thank you for your purchase. Your order has been successfully placed.</p>
+    </div>
+
+    <div class="order-info">
+        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+        <p><strong>Name:</strong> {{ order.name }}</p>
+        <p><strong>Email:</strong> {{ order.email }}</p>
+        <p><strong>Phone:</strong> {{ order.number }}</p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        <p><strong>Address Type:</strong> {{ order.address_type }}</p>
+        <p><strong>Payment Status:</strong> {{ order.payment_status }}</p>
+        <p><strong>Order Status:</strong> {{ order.status }}</p>
+    </div>
+
+    <h3>Ordered Items</h3>
+
+    <div class="order-items">
+        {% for item in order_items %}
+        <div class="item-card">
+            <img src="{{ item.product.product_image.url }}" alt="">
+            <div>
+                <h4>{{ item.product.product_name }}</h4>
+                <p>Price: ${{ item.price }}</p>
+                <p>Qty: {{ item.qty }}</p>
+                <p>Subtotal: <strong>${{ item.total_price }}</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="total-box">
+        Total Paid: ${{ total_amount }}
+    </div>
+
+    <a href="{% url 'home' %}" class="btn-home">Continue Shopping</a>
+    <a href="{% url 'download_invoice' order.id %}" class="btn-home" style="margin-top:15px; background:#4a8ef5;">
+    Download Invoice (PDF)
+</a>
+
+</div>
+
+{% endblock %}
