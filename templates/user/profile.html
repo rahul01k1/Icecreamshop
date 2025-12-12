@@ -73,6 +73,7 @@
                         <p>Messages</p>
                     </a>
                 </div>
+                <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
             </div>
 
         </div>
@@ -240,6 +241,43 @@
     margin-top: 5px;
 }
 
+.btn-logout {
+    display: inline-block;
+    padding: 12px 25px;
+    background:  #ff7fa8;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-top: 25px;
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.btn-logout:hover {
+    background: #d93e59;
+}
+
+
 </style>
+
+<script>
+function confirmLogout() {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You will be logged out.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ff4d6d",
+        cancelButtonColor: "#777",
+        confirmButtonText: "Logout",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{% url 'logout' %}";
+        }
+    });
+}
+</script>
 
 {% endblock %}
