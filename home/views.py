@@ -1,11 +1,12 @@
 from django.shortcuts import render , redirect , get_object_or_404
 from django.http import JsonResponse , HttpResponse
 from django.core.paginator import Paginator
-from django.contrib.auth import login , logout 
 from django.contrib.auth.hashers import make_password , check_password
 from django.contrib import messages
-from  .models import Buyer , Seller , Product , Cart , Wishlist , Message , Newsletter ,Order , OrderItem
+from  .models import *
 import json
+
+from django.views.decorators.csrf import csrf_exempt
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
@@ -26,13 +27,25 @@ def order(request):
     return render(request,"pages/order.html",context)
 
 def menu(request):
-    products = Product.objects.filter(product_status = "active")
+    products = Product.objects.filter(product_status="active")
 
-    paginator = Paginator(products, 12)  # 12 products per page
+    paginator = Paginator(products, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    user_id = request.session.get("user_id")
+
+    if user_id:
+        wishlist_ids = Wishlist.objects.filter(user_id=user_id).values_list("product_id", flat=True)
+        for p in page_obj:
+            p.is_in_wishlist = p.id in wishlist_ids
+    else:
+        for p in page_obj:
+            p.is_in_wishlist = False
+
     return render(request, "pages/menu.html", {"products": page_obj})
+
+
 
 def about(request):
     return render(request,"pages/about.html")
@@ -188,83 +201,125 @@ def empty_cart(request):
     return JsonResponse({"status": "success"})
 
 def checkout(request):
+
     if not request.session.get("user_id"):
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return JsonResponse({"error": "Not logged in"}, status=403)
         return redirect("login")
 
     user = Buyer.objects.get(id=request.session.get("user_id"))
-    cart_items = Cart.objects.filter(user=user)
 
-    if not cart_items.exists():
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return JsonResponse({"error": "Cart is empty"}, status=400)
-        messages.error(request, "Your Cart Is Empty!")
-        return redirect("cart")
+    # =========================================
+    # MODE 1: BUY NOW VIA GET
+    # =========================================
+    buy_now_id = request.GET.get("buy_now")
+    is_buy_now = False
 
-    # -----------------------------
-    # AJAX POST → CREATE ORDER
-    # -----------------------------
+    if buy_now_id:
+        try:
+            product = Product.objects.get(id=buy_now_id)
+        except Product.DoesNotExist:
+            messages.error(request, "Product not found.")
+            return redirect("home")
+
+        class TempItem:
+            def __init__(self, product):
+                self.id = "buy-now"
+                self.product = product
+                self.price = product.product_price
+                self.qty = 1
+
+            def subtotal(self):
+                return self.price
+
+        cart_items = [TempItem(product)]
+        total_amount = product.product_price
+        is_buy_now = True
+
+    else:
+        # =========================================
+        # MODE 2: NORMAL CART CHECKOUT
+        # =========================================
+        cart_items = list(Cart.objects.filter(user=user))
+        if not cart_items:
+            messages.error(request, "Your cart is empty!")
+            return redirect("cart")
+
+        total_amount = sum(item.subtotal() for item in cart_items)
+
+    # =========================================
+    # POST → PLACE ORDER
+    # =========================================
     if request.method == "POST":
-        data = json.loads(request.body.decode("utf-8"))
+        data = json.loads(request.body)
 
-        name = data.get("name")
-        email = data.get("email")
-        number = data.get("number")
-        address = data.get("address")
-        address_type = data.get("address_type")
-        payment_method = data.get("method")
+        # detect buy now via POST
+        buy_now_id = data.get("buy_now_id")
+        is_buy_now = True if buy_now_id else False
 
+        if is_buy_now:
+            product = Product.objects.get(id=buy_now_id)
 
-        # Create Order
+        # create order
         order = Order.objects.create(
             user=user,
-            name=name,
-            email=email,
-            number=number,
-            address=address,
-            address_type=address_type,
+            name=data["name"],
+            email=data["email"],
+            number=data["number"],
+            address=data["address"],
+            address_type=data["address_type"],
             status="Processing",
-            payment_status="Pending" if payment_method == "cod" else "Paid"
+            payment_status="Pending" if data["method"] == "cod" else "Paid"
         )
 
-        # Order Items
-        for item in cart_items:
-            product = item.product
-
-            if product.product_stock < item.qty:
-                return JsonResponse({
-                    "error": f"Not enough stock for {product.product_name}"
-                }, status=400)
-
+        # =========================================
+        # BUY NOW ORDER CREATION
+        # =========================================
+        if is_buy_now:
             OrderItem.objects.create(
                 order=order,
                 product=product,
                 seller=product.seller,
-                price=item.price,
-                qty=item.qty,
+                price=product.product_price,
+                qty=1
             )
 
-            product.product_stock -= item.qty
+            product.product_stock -= 1
             product.save()
 
-        cart_items.delete()
+        else:
+            # =========================================
+            # CART ORDER CREATION
+            # =========================================
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    seller=item.product.seller,
+                    price=item.price,
+                    qty=item.qty
+                )
+
+                item.product.product_stock -= item.qty
+                item.product.product_stock = max(0, item.product.product_stock)
+                item.product.save()
+
+            Cart.objects.filter(user=user).delete()
 
         return JsonResponse({
             "success": True,
             "redirect_url": f"/order_success/{order.id}/"
         })
 
-    # -----------------------------
-    # NORMAL PAGE RENDER
-    # -----------------------------
-    total_amount = sum(item.subtotal() for item in cart_items)
-
+    # =========================================
+    # GET → RENDER PAGE
+    # =========================================
     return render(request, "shop/checkout.html", {
         "user": user,
         "cart_items": cart_items,
-        "total_amount": total_amount
+        "total_amount": total_amount,
+        "is_buy_now": is_buy_now
     })
+
+
 
 def order_success(request, order_id):
 
@@ -306,23 +361,26 @@ def add_to_wishlist(request, id):
 
     return redirect("wishlist")
 
-def toggle_wishlist(request, id):
+@csrf_exempt
+def toggle_wishlist(request):
+    data = json.loads(request.body)
+    product_id = data["product_id"]
 
     user_id = request.session.get("user_id")
     if not user_id:
         return JsonResponse({"error": "Login required"}, status=403)
 
     user = Buyer.objects.get(id=user_id)
-    product = Product.objects.get(id=id)
+    product = Product.objects.get(id=product_id)
 
-    wishlist_item = Wishlist.objects.filter(user=user, product=product)
+    existing = Wishlist.objects.filter(user=user, product=product)
+    if existing.exists():
+        existing.delete()
+        return JsonResponse({"removed": True})
 
-    if wishlist_item.exists():
-        wishlist_item.delete()
-        return JsonResponse({"status": "removed"})
-    else:
-        Wishlist.objects.create(user=user, product=product, price=product.product_price)
-        return JsonResponse({"status": "added"})
+    Wishlist.objects.create(user=user, product=product, price=product.product_price)
+    return JsonResponse({"added": True})
+
 
 def remove_wishlist(request, id):
     user_id = request.session.get("user_id")

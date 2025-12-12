@@ -42,11 +42,11 @@
 
                 <button type="submit"
                         formaction="{% url 'add_to_wishlist' product.id %}"
-                        class="btn wishlist-btn">
+                        class="btn">
                     Add to Wishlist
                 </button>
 
-                <button type="submit" class="btn add-cart-btn">
+                <button type="submit" class="btn">
                     Add to Cart
                 </button>
 
@@ -54,8 +54,7 @@
         </form>
 
         <!-- BUY NOW -->
-        <a href="{% url 'checkout' %}?get_id={{ product.id }}"
-           class="btn buy-now-btn">
+        <a href="{% url 'checkout' %}?buy_now={{ product.id }}" class="buy-now-btn">
             Buy Now
         </a>
 
@@ -145,7 +144,7 @@
 }
 
 .wishlist-btn {
-    background: #ffe5ec;
+    background: #de587cff;
     color: #d6336c;
     border: 1px solid #ffb3c6;
 }
@@ -155,7 +154,7 @@
 }
 
 .add-cart-btn {
-    background: #14b8a6;
+    background: #de587cff;
     color: #fff;
 }
 
@@ -176,9 +175,9 @@
     border-radius: 6px;
 }
 
-.buy-now-btn:hover {
+{% comment %} .buy-now-btn:hover {
     background: #e63c5c;
-}
+} {% endcomment %}
 
 /* RESPONSIVE */
 @media (max-width: 850px) {

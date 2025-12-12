@@ -62,7 +62,7 @@
                         <!-- BUY NOW Button -->
                         <button type="button"
                                 class="btn"
-                                onclick="event.stopPropagation(); window.location.href='{% url 'checkout' %}'">
+                                onclick="event.stopPropagation(); window.location.href='{% url 'checkout' %}?buy_now={{ product.id }}'">
                             Buy Now
                         </button>
 
@@ -102,5 +102,35 @@
     </div>
 
 </div>
+
+<script>
+function toggleWishlist(btn, productId) {
+
+    fetch("/toggle_wishlist/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}", 
+        },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.added) {
+            btn.innerHTML = "<i class='bx bxs-heart'></i>";
+            Swal.fire("Added!", "Item added to wishlist.", "success");
+        }
+
+        if (data.removed) {
+            btn.innerHTML = "<i class='bx bx-heart'></i>";
+            Swal.fire("Removed!", "Item removed from wishlist.", "info");
+        }
+
+    })
+    .catch(err => console.log("Wishlist toggle error:", err));
+}
+</script>
+
 
 {% endblock content %}

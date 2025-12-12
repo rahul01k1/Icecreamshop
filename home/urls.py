@@ -33,7 +33,7 @@ urlpatterns = [
 
     # Wishlist
     path('wishlist/', views.wishlist, name="wishlist"),
-    path("toggle-wishlist/<int:id>/", views.toggle_wishlist, name="toggle_wishlist"),
+    path("toggle_wishlist/", views.toggle_wishlist, name="toggle_wishlist"),
     path('add_to_wishlist/<int:id>/', views.add_to_wishlist, name="add_to_wishlist"),
     path('remove_wishlist/<int:id>/', views.remove_wishlist, name="remove_wishlist"),
 

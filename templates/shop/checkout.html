@@ -79,14 +79,14 @@
             <img src="{{ item.product.product_image.url }}">
             <div>
                 <h4>{{ item.product.product_name }}</h4>
-                <p class="price">${{ item.price }} × {{ item.qty }}</p>
-                <p>Subtotal: <strong>${{ item.subtotal }}</strong></p>
+                <p class="price">₹ {{ item.price }} × {{ item.qty }}</p>
+                <p>Subtotal: <strong>₹ {{ item.subtotal }}</strong></p>
             </div>
         </div>
         {% endfor %}
 
         <div class="total-box">
-            Total Amount Payable: ${{ total_amount }}
+            Total Amount Payable: ₹ {{ total_amount }}
         </div>
 
     </div>
@@ -142,6 +142,46 @@ function placeOrder() {
         }
     });
 }
+
+function changeQty(itemId, action) {
+    fetch("/update_cart_qty/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ id: itemId, action: action })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`qty-${itemId}`).innerText = data.qty;
+            document.getElementById(`subtotal-${itemId}`).innerText = "₹ " + data.subtotal;
+            document.querySelector(".total-box").innerText =
+                "Total Amount Payable: ₹ " + data.total_amount;
+        }
+    });
+}
+
+function removeItem(itemId) {
+    fetch("/remove_cart_item/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ id: itemId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`item-${itemId}`).remove();
+            document.querySelector(".total-box").innerText =
+                "Total Amount Payable: ₹ " + data.total_amount;
+        }
+    });
+}
+
 </script>
 
 {% endblock %}
