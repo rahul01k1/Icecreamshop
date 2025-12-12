@@ -44,20 +44,24 @@
 
                         <form action="{% url 'add_to_cart' item.product.id %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="icon-btn">
+                            <button type="button"
+                                    class="icon-btn"
+                                    onclick="addToCart('{{ item.product.id }}')">
                                 <img src="{% static 'image/icon/cart.png' %}">
                             </button>
+
                         </form>
 
                         <a href="{% url 'view_product' item.product.id %}" class="icon-btn">
                             <img src="{% static 'image/icon/eye.png' %}">
                         </a>
 
-                        <a href="{% url 'remove_wishlist' item.id %}"
-                           onclick="return confirm('Remove from wishlist?')"
-                           class="icon-btn delete-btn">
+                        <a href="javascript:void(0);"
+                        onclick="removeWishlist('{{ item.id }}')"
+                        class="icon-btn delete-btn">
                             <img src="{% static 'image/icon/trash.png' %}">
                         </a>
+
 
                     </div>
 
@@ -81,6 +85,74 @@
     </div>
 
 </div>
+
+
+<script>
+function removeWishlist(itemId) {
+
+    Swal.fire({
+        title: "Remove Item?",
+        text: "Do you want to remove this item from your wishlist?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ff7fa8",
+        cancelButtonColor: "#777",
+        confirmButtonText: "Yes, remove"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+            window.location.href = "/remove_wishlist/" + itemId + "/";
+        }
+
+    });
+}
+
+function addToCart(productId) {
+    Swal.fire({
+        title: "Add to Cart?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#14b8a6",
+        cancelButtonColor: "#777",
+        confirmButtonText: "Yes, Add"
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            fetch("/add_to_cart/" + productId + "/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+                    Swal.fire({
+                        title: "Added!",
+                        text: "Item added to your cart.",
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: data.error,
+                        icon: "error"
+                    });
+                }
+
+            });
+
+        }
+    });
+}
+
+</script>
+
+
 
 <!-- ===================== WISHLIST STYLES ===================== -->
 <style>

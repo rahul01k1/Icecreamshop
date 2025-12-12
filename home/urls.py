@@ -44,7 +44,9 @@ urlpatterns = [
 
     # Checkout
     path('checkout/', views.checkout, name="checkout"),
-    path('checkout/<int:id>', views.checkout, name="checkout"),
+    path('add_newsletter/', views.add_newsletter, name="add_newsletter"),
+    
+    # path('checkout/<int:id>', views.checkout, name="checkout"),
 
     
     # Profile

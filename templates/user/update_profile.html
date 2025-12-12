@@ -6,8 +6,8 @@
 
 <div class="update-wrapper">
 
-    <h1 class="title">Update Profile</h1><br>
-    <p class="subtitle">Edit your personal details and keep your information up to date</p>
+    <h1 class="title">Update Profile</h1>
+    <p class="subtitle">Manage your personal information and keep your account up to date</p>
     <img src="{% static 'image/separator-img.png' %}" class="separator">
 
     <div class="update-container">
@@ -19,10 +19,10 @@
 
             <img src="{{ user.user_image.url }}" class="profile-img">
 
-            <h3 class="profile-name">{{ user.user_name }}</h3><br>
+            <h3 class="profile-name">{{ user.user_name }}</h3>
             <p class="profile-email">{{ user.user_email }}</p>
 
-            <p class="note">You can update your photo, email, and password</p>
+            <p class="note">You can update your photo, email, or password anytime</p>
         </div>
 
         <!-- RIGHT SIDE — Update Form -->
@@ -36,33 +36,33 @@
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label>Your Name </label>
-                        <input type="text" name="user_name" value="{{ user.user_name }}" class="input">
+                        <label>Your Name</label>
+                        <input type="text" name="user_name" value="{{ user.user_name }}" class="input big-input">
                     </div>
 
                     <div class="form-group">
-                        <label>Your Email </label>
-                        <input type="email" name="user_email" value="{{ user.user_email }}" class="input">
+                        <label>Your Email</label>
+                        <input type="email" name="user_email" value="{{ user.user_email }}" class="input big-input">
                     </div>
 
                     <div class="form-group">
-                        <label>Change Profile Image</label>
-                        <input type="file" name="user_image" accept="image/*" class="input">
+                        <label>Profile Image</label>
+                        <input type="file" name="user_image" accept="image/*" class="input big-input file-input">
                     </div>
 
                     <div class="form-group">
                         <label>Old Password</label>
-                        <input type="password" name="user_old_password" class="input" placeholder="Enter old password">
+                        <input type="password" name="user_old_password" class="input big-input" placeholder="Enter your current password">
                     </div>
 
                     <div class="form-group">
                         <label>New Password</label>
-                        <input type="password" name="user_new_password" class="input" placeholder="Enter new password">
+                        <input type="password" name="user_new_password" class="input big-input" placeholder="Create a strong password">
                     </div>
 
                     <div class="form-group">
                         <label>Confirm Password</label>
-                        <input type="password" name="user_confirm_password" class="input" placeholder="Confirm password">
+                        <input type="password" name="user_confirm_password" class="input big-input" placeholder="Re-enter new password">
                     </div>
 
                 </div>
@@ -76,7 +76,7 @@
 
 
 <!-- ============================================================
-                          STYLING
+                          PROFESSIONAL STYLING
 ============================================================ -->
 <style>
 
@@ -86,124 +86,160 @@
 }
 
 .title {
-    font-size: 42px;
+    font-size: 48px;
     font-weight: 700;
-    color: #333;
+    color: #222;
+    margin-bottom: 5px;
 }
 
 .subtitle {
-    font-size: 18px;
-    color: #666;
-    margin-top: -8px;
+    font-size: 20px;
+    color: #777;
+    margin-top: 0;
 }
 
 .separator {
-    width: 180px;
-    margin-top: 12px;
+    width: 190px;
+    margin: 14px auto;
 }
 
 .update-container {
     display: flex;
     justify-content: center;
     width: 90%;
-    margin-inline: auto;
-    margin-top: 50px;
-    gap: 40px;
+    margin: 60px auto 0;
+    gap: 45px;
 }
 
-/* Left Panel - Preview */
+
+/* ----------------------------------------------
+                 LEFT PROFILE PREVIEW
+-----------------------------------------------*/
 .profile-preview {
     width: 30%;
-    background: #fff;
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
-    text-align: center;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
 }
 
 .section-title {
-    font-size: 26px;
+    font-size: 30px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+    color: #333;
 }
 
 .profile-img {
-    width: 170px;
-    height: 170px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid #ffb6c1;
-    margin-bottom: 15px;
+    border: 5px solid #ff99b6;
+    margin-bottom: 18px;
 }
 
 .profile-name {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
+    color: #222;
 }
 
 .profile-email {
-    color: #777;
-    margin-bottom: 15px;
+    font-size: 17px;
+    color: #666;
+    margin-bottom: 18px;
 }
 
 .note {
-    font-size: 14px;
+    font-size: 15px;
     color: #888;
 }
 
-/* Right Panel - Form */
+
+/* ----------------------------------------------
+                   RIGHT FORM AREA
+-----------------------------------------------*/
 .update-form {
     width: 65%;
-    background: #fff;
-    padding: 35px 40px;
-    border-radius: 18px;
-    box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+    background: #ffffff;
+    padding: 45px 48px;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.07);
 }
 
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
+    gap: 28px;
 }
 
 label {
-    font-size: 15px;
+    display: block;
+    font-size: 17px;
     font-weight: 600;
-    color: #444;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.big-input {
+    font-size: 17px;
 }
 
 .input {
     width: 100%;
-    padding: 12px 15px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: 0.3s;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #d5d5d5;
+    background: #fafafa;
+    transition: 0.3s ease;
+}
+
+.input:hover {
+    background: #fff;
 }
 
 .input:focus {
     border-color: #ff7fa8;
-    box-shadow: 0 0 6px rgba(255,127,168,0.3);
+    box-shadow: 0 0 8px rgba(255,127,168,0.25);
+}
+
+.file-input {
+    padding: 12px;
 }
 
 .save-btn {
     width: 100%;
-    margin-top: 30px;
-    padding: 14px;
+    margin-top: 35px;
+    padding: 16px;
     background: #ff7fa8;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 10px;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
 
 .save-btn:hover {
     background: #ff5f92;
+    transform: translateY(-2px);
 }
 
 </style>
 
+{% if messages %}
+    {% for msg in messages %}
+        Swal.fire({
+            title: "{{ msg.tags|title }}",
+            text: "{{ msg }}",
+            icon: "{{ msg.tags }}",
+            confirmButtonColor: "#ff7fa8",
+        }).then(() => {
+            {% if msg.tags == "success" %}
+                window.location.href = "{% url 'profile' %}";
+            {% endif %}
+        });
+    {% endfor %}
+{% endif %}
 {% endblock %}

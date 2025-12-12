@@ -139,4 +139,17 @@
 
 </div>
 
+<script>
+{% if messages %}
+    {% for message in messages %}
+        Swal.fire({
+            icon: "{{ message.tags|default:'info' }}",
+            title: "{{ message }}",
+            timer: 1800,
+            showConfirmButton: false
+        });
+    {% endfor %}
+{% endif %}
+</script>
+
 {% endblock %}

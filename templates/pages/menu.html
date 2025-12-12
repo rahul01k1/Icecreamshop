@@ -36,12 +36,12 @@
                 <!-- ❤️ Wishlist Button (top-right) -->
                 <button class="wishlist-btn"
                         type="button"
-                        onclick="event.stopPropagation(); toggleWishlist(this, '{{ product.id }}')">
+                        onclick="event.stopPropagation(); toggleWishlist(this, '{{ product.id }}',  {% if request.session.user_id %}true{% else %}false{% endif %})">
 
                     {% if product.is_in_wishlist %}
-                        <i class='bx bxs-heart'></i>   <!-- FILLED HEART -->
+                        <i class='bx bxs-heart'></i>
                     {% else %}
-                        <i class='bx bx-heart'></i>    <!-- OUTLINE HEART -->
+                        <i class='bx bx-heart'></i>
                     {% endif %}
                 </button>
 
@@ -104,13 +104,28 @@
 </div>
 
 <script>
-function toggleWishlist(btn, productId) {
+function toggleWishlist(btn, productId, isLoggedIn) {
 
+    // If user NOT logged in → show SweetAlert and redirect
+    if (!isLoggedIn) {
+        Swal.fire({
+            title: "Login Required",
+            text: "Please login to add items to your wishlist.",
+            icon: "warning",
+            confirmButtonText: "Login Now",
+            confirmButtonColor: "#ff7fa8"
+        }).then(() => {
+            window.location.href = "{% url 'login' %}";
+        });
+        return;
+    }
+
+    // Logged-in users → Normal wishlist toggle
     fetch("/toggle_wishlist/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}", 
+            "X-CSRFToken": "{{ csrf_token }}",
         },
         body: JSON.stringify({ product_id: productId })
     })
@@ -126,11 +141,10 @@ function toggleWishlist(btn, productId) {
             btn.innerHTML = "<i class='bx bx-heart'></i>";
             Swal.fire("Removed!", "Item removed from wishlist.", "info");
         }
-
-    })
-    .catch(err => console.log("Wishlist toggle error:", err));
+    });
 }
 </script>
+
 
 
 {% endblock content %}

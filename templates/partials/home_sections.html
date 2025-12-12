@@ -226,8 +226,11 @@
         </p>
 
         <div class="input-field">
-            <input type="email" placeholder="Enter your E-Mail">
-            <button class="btn">subscribe</button>
+           <form id="newsletterForm">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Enter your E-Mail" required>
+                <button type="submit" class="btn">Subscribe</button>
+            </form>
         </div>
 
         <p>No ads, No trails, No commitment</p>
@@ -255,3 +258,36 @@
         </div>
     </div>
 </div>
+<script>
+document.getElementById("newsletterForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    fetch("{% url 'add_newsletter' %}", {
+        method: "POST",
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        if (data.error) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.error
+            });
+        }
+
+        if (data.success) {
+            Swal.fire({
+                icon: "success",
+                title: "Subscribed!",
+                text: data.success
+            });
+
+            document.getElementById("newsletterForm").reset();
+        }
+    });
+});
+</script>

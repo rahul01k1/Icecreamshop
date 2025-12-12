@@ -42,8 +42,28 @@ def menu(request):
     else:
         for p in page_obj:
             p.is_in_wishlist = False
+    
+    is_logged_in = True if request.session.get("user_id") else False
+    return render(request, "pages/menu.html", {"products": page_obj, "is_logged_in": is_logged_in})
 
-    return render(request, "pages/menu.html", {"products": page_obj})
+
+def add_newsletter(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    email = request.POST.get("email")
+
+    if not email:
+        return JsonResponse({"error": "Please enter an email."}, status=400)
+
+    # Check duplicate
+    if Newsletter.objects.filter(email=email).exists():
+        return JsonResponse({"error": "This email is already subscribed."}, status=409)
+
+    Newsletter.objects.create(email=email)
+
+    return JsonResponse({"success": "You have successfully subscribed!"})
+
 
 
 
@@ -488,20 +508,51 @@ def update_profile(request):
     user = Buyer.objects.get(id=user_id)
 
     if request.method == "POST":
+
+        # Update basic details
         user.user_name = request.POST.get("user_name")
         user.user_email = request.POST.get("user_email")
-        user.user_password = request.POST.get("user_password")   # plain password (you can hash later)
 
+        # Update Image
         if "user_image" in request.FILES:
             user.user_image = request.FILES["user_image"]
 
+        # ==============================
+        # PASSWORD CHANGE LOGIC
+        # ==============================
+        old_pass = request.POST.get("user_old_password")
+        new_pass = request.POST.get("user_new_password")
+        confirm_pass = request.POST.get("user_confirm_password")
+
+        # If user entered any password fields → password update requested
+        if old_pass or new_pass or confirm_pass:
+
+            # Check old password match
+            if old_pass != user.user_password:
+                messages.error(request, "Incorrect old password.")
+                return redirect("update_profile")
+
+            # New password must match confirm password
+            if new_pass != confirm_pass:
+                messages.error(request, "New Password and Confirm Password do not match.")
+                return redirect("update_profile")
+
+            # New password cannot be empty
+            if new_pass.strip() == "":
+                messages.error(request, "Password cannot be empty.")
+                return redirect("update_profile")
+
+            # Save new password
+            user.user_password = new_pass
+
+        # Save all updates
         user.save()
+
         messages.success(request, "Profile updated successfully.")
         return redirect("profile")
 
-    return render(request, "user/update_profile.html", {
-        "user": user
-    })
+    return render(request, "user/update_profile.html", {"user": user})
+
 
 def user_messages(request):
     user_id = request.session.get("user_id")
