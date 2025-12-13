@@ -58,6 +58,23 @@
             updateCartCount();
             updateWishlistCount();
         });
+
+        function confirmCancel(orderId) {
+            Swal.fire({
+                title: "Cancel Order?",
+                text: "This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#ff7fa8",
+                cancelButtonColor: "#999",
+                confirmButtonText: "Yes, Cancel Order"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/cancel_order/${orderId}/`;
+                }
+            });
+        }
+
     </script>
 
 </body>

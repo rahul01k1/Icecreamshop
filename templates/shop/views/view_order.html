@@ -1,81 +1,268 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}My Orders - The Blue Summer{% endblock %}
+{% block title %}Order Details - Blue Sky Summer{% endblock %}
 
 {% block content %}
 
-<div class="products">
-    <div class="heading">
-        <h1>Your Order History</h1>
-        <img src="{% static 'image/separator-img.png' %}" alt="">
+<div class="order-view-wrapper">
+
+    <!-- HEADER -->
+    <div class="order-header">
+        <h1>Order #{{ order.id }}</h1>
+        <p>Placed on {{ order.date|date:"M d, Y" }}</p>
+        <img src="{% static 'image/separator-img.png' %}" />
     </div>
 
-    <div class="box-container">
+   <div class="order-cards-grid">
+    {% for item in order_items %}
+    <div class="order-card">
 
-        {% if orders %}
-            {% for order in orders %}
-            <div class="box">
+        <div class="order-image-box">
+            <img src="{{ item.product.product_image.url }}" alt="{{ item.product.product_name }}">
+        </div>
 
-                <!-- Show first product image from the order -->
-                {% with first_item=order.items.first %}
-                    {% if first_item %}
-                        <img src="{{ first_item.product.product_image.url }}" class="image">
-                    {% endif %}
-                {% endwith %}
+        <div class="order-info-box">
+            <h2>{{ item.product.product_name }}</h2>
 
-                <div class="content">
-                    <img src="{% static 'image/shape-19.png' %}" class="shap">
+            <span class="price">₹{{ item.price }}</span>
+            <span class="stock">Qty: {{ item.qty }}</span>
 
-                    <h3 class="name">Order #{{ order.id }}</h3>
+            <p class="desc">
+                {{ item.product.product_detail|default:"Premium handcrafted ice cream made with love." }}
+            </p>
 
-                    <p class="price">
-                        Total Amount: ${{ order.order_total }}
-                    </p>
-
-                    <p class="date">
-                        <i class="bx bxs-calendar-alt"></i> {{ order.date|date:"M d, Y" }}
-                    </p>
-
-                    <p>Status:
-                        {% if order.status == "delivered" %}
-                            <span style="color: green;">Delivered</span>
-                        {% elif order.status == "canceled" %}
-                            <span style="color: red;">Canceled</span>
-                        {% else %}
-                            <span style="color: orange;">In Progress</span>
-                        {% endif %}
-                    </p>
-
-                    <p>Payment:
-                        {% if order.payment_status == "Paid" %}
-                            <span style="color: green;">Paid</span>
-                        {% else %}
-                            <span style="color: red;">Pending</span>
-                        {% endif %}
-                    </p>
-
-                    <div class="flex-btn">
-                        <a href="{% url 'view_order' order.id %}" class="btn">View Details</a>
-
-                        {% if order.status != "canceled" %}
-                        <a href="{% url 'cancel_order' order.id %}" class="btn"
-                           onclick="return confirm('Cancel this order?');">
-                           Cancel
-                        </a>
-                        {% endif %}
-                    </div>
-
-                </div>
+            <div class="meta">
+                <p><strong>Seller:</strong> {{ item.seller.seller_name }}</p>
+                <p><strong>Item Total:</strong> ₹{{ item.total_price }}</p>
             </div>
-            {% endfor %}
-        {% else %}
-        
-            <div class="empty">
-                <p>No orders placed yet!</p>
-            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-summary">
+
+        <h3>Order Summary</h3>
+
+        <div class="summary-row">
+            <span>Status</span>
+            <span class="status
+                {% if order.status == 'delivered' %}delivered
+                {% elif order.status == 'canceled' %}canceled
+                {% else %}progress{% endif %}">
+                {{ order.status }}
+            </span>
+        </div>
+
+        <div class="summary-row">
+            <span>Payment</span>
+            <span class="{% if order.payment_status == 'Paid' %}paid{% else %}pending{% endif %}">
+                {{ order.payment_status }}
+            </span>
+        </div>
+
+        <div class="summary-row total">
+            <span>Grand Total</span>
+            <span>₹{{ total_amount }}</span>
+        </div>
+
+        {% if order.status != "canceled" %}
+        <button class="cancel-btn" onclick="confirmCancel({{ order.id }})">
+            Cancel Order
+        </button>
         {% endif %}
+
+        <a href="{% url 'order' %}" class="back-link">← Back to Orders</a>
 
     </div>
 </div>
+
+<!-- SWEETALERT -->
+<script>
+function confirmCancel(orderId) {
+    Swal.fire({
+        title: "Cancel Order?",
+        text: "This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ff7fa8",
+        cancelButtonColor: "#aaa",
+        confirmButtonText: "Yes, Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/cancel_order/${orderId}/`;
+        }
+    });
+}
+</script>
+
+<style>
+/* ===================== ROOT ===================== */
+:root {
+    --primary: #ff7fa8;
+    --dark: #333;
+    --muted: #777;
+    --bg: #f7f8fc;
+    --card: #ffffff;
+    --radius: 18px;
+    --shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* ===================== PAGE ===================== */
+.order-view-wrapper {
+    background: var(--bg);
+    padding: 70px 0;
+}
+
+/* HEADER */
+.order-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.order-header h1 {
+    font-size: 38px;
+    font-weight: 700;
+}
+.order-header p {
+    color: var(--muted);
+}
+.order-header img {
+    width: 160px;
+    margin-top: 10px;
+}
+
+/* ===================== PRODUCT CARD ===================== */
+.order-card {
+    width: 100%;
+    background: var(--card);
+    display: grid;
+    grid-template-columns: 1.3fr 1.7fr;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.order-cards-grid {
+    max-width: 1500px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+    padding: 0 40px;
+}
+
+/* IMAGE */
+.order-image-box {
+    background: #dfe0e2dc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+.order-image-box img {
+    width: 100%;
+    max-width: 300px;
+    object-fit: cover;
+    transition: transform .4s ease;
+}
+.order-image-box img:hover {
+    transform: scale(1.05);
+}
+
+/* DETAILS */
+.order-info-box {
+    padding: 45px;
+}
+.order-info-box h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+.price {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+}
+.stock {
+    display: inline-block;
+    margin: 12px 0;
+    background: #e8f7ed;
+    color: #2e7d32;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.desc {
+    color: var(--muted);
+    margin: 20px 0;
+    line-height: 1.6;
+}
+.meta p {
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+/* ===================== SUMMARY ===================== */
+.order-summary {
+    max-width: 1200px;
+    margin: 40px auto 0;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 35px;
+}
+.order-summary h3 {
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+.summary-row.total {
+    font-size: 22px;
+    color: black;
+}
+
+/* STATUS */
+.status.delivered { color: #2e7d32; }
+.status.canceled { color: #d32f2f; }
+.status.progress { color: #f57c00; }
+.paid { color: #2e7d32; }
+.pending { color: #d32f2f; }
+
+/* BUTTONS */
+.cancel-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background:red;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 900px) {
+    .order-cards-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+    }
+}
+</style>
 
 {% endblock %}

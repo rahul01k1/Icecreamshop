@@ -5,7 +5,6 @@ from django.contrib.auth.hashers import make_password , check_password
 from django.contrib import messages
 from  .models import *
 import json
-
 from django.views.decorators.csrf import csrf_exempt
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -15,16 +14,15 @@ def home(request):
     return render(request,"pages/home.html")
 
 def order(request):
-    if not request.session.get("user_id"):
+    user_id = request.session.get("user_id")
+    if not user_id:
         return redirect("login")
-    
-    user = Buyer.objects.get(id = request.session.get("user_id"))
-    order = Order.objects.filter(user=user).order_by('-id')
 
-    context = {
-        "orders":order
-    }
-    return render(request,"pages/order.html",context)
+    orders = Order.objects.filter(user_id=user_id).prefetch_related("items")
+
+    return render(request, "pages/order.html", {
+        "orders": orders
+    })
 
 def menu(request):
     products = Product.objects.filter(product_status="active")
@@ -435,12 +433,13 @@ def view_product(request, id):
 
 
 def view_order(request, id):
-
     user_id = request.session.get("user_id")
+    if not user_id:
+        return redirect("login")
 
     order = get_object_or_404(Order, id=id, user_id=user_id)
 
-    order_items = order.items.all()
+    order_items = OrderItem.objects.filter(order=order)
     total_amount = sum(item.total_price() for item in order_items)
 
     return render(request, "shop/views/view_order.html", {
@@ -449,25 +448,35 @@ def view_order(request, id):
         "total_amount": total_amount,
     })
 
+
 def cancel_order(request, id):
+    user_id = request.session.get("user_id")
 
-    order = get_object_or_404(Order, id=id)
+    if not user_id:
+        return redirect("login")
 
-    # update status
+    # Ensure user can cancel ONLY their own order
+    order = get_object_or_404(Order, id=id, user_id=user_id)
+
+    # Prevent double cancel
+    if order.status == "canceled":
+        messages.warning(request, "This order is already canceled.")
+        return redirect("view_order", id=id)
+
+    # Update order status
     order.status = "canceled"
     order.payment_status = "pending"
     order.save()
 
-    # restore product stock
+    # Restore product stock
     for item in order.items.all():
         product = item.product
         product.product_stock += item.qty
-        product.save()
+        product.save(update_fields=["product_stock"])
 
     messages.success(request, "Order canceled successfully!")
 
     return redirect("view_order", id=id)
-
 
 # Add Cart And Wishlist Count:
 

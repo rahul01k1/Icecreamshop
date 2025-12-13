@@ -46,7 +46,7 @@ class Seller(models.Model):
 class Product(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=255)
-    product_price = models.DecimalField(max_digits=10, decimal_places=2)
+    product_price = models.DecimalField(max_digits=10, decimal_places=2,default=Decimal("10.00"))
     product_image = models.ImageField(upload_to="products/")
     product_stock = models.IntegerField()
     product_detail = models.TextField()
@@ -119,6 +119,7 @@ class Order(models.Model):
     payment_status = models.CharField(max_length=255, default="pending")
 
     def order_total(self):
+        # noinspection PyUnresolvedReferences
         return sum(item.total_price() for item in self.items.all())
 
     def __str__(self):
